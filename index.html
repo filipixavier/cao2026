@@ -127,7 +127,11 @@ tailwind.config = {
           <select class="border rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-pmes-300" id="filtStatus" onchange="renderFrota()"><option value="">Todos Status</option><option value="Operacional">Operacional</option><option value="Manutenção Corretiva">Man. Corretiva</option><option value="Manutenção Preventiva">Man. Preventiva</option><option value="Reserva">Reserva</option><option value="Inoperante">Inoperante</option></select>
           <select class="border rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-pmes-300" id="filtMod" onchange="renderFrota()"><option value="">Todas Modalidades</option></select>
         </div>
-        <button class="bg-pmes-400 text-white px-4 py-2 rounded-lg text-sm font-medium hover:bg-pmes-300 transition" onclick="openModal('mdlViatura')"><i class="fas fa-plus mr-2"></i>Nova Viatura</button>
+        <div class="flex items-center gap-2">
+          <span class="text-xs text-gray-400 font-medium" id="frotaCount"></span>
+          <button class="bg-gray-200 text-gray-600 px-3 py-2 rounded-lg text-xs hover:bg-gray-300 transition" onclick="resetVTR()" title="Restaurar dados padrão (34 VTR)"><i class="fas fa-rotate-left mr-1"></i>Restaurar</button>
+          <button class="bg-pmes-400 text-white px-4 py-2 rounded-lg text-sm font-medium hover:bg-pmes-300 transition" onclick="abrirNovaViatura()"><i class="fas fa-plus mr-2"></i>Nova Viatura</button>
+        </div>
       </div>
       <div class="bg-white rounded-xl shadow-sm overflow-hidden"><div class="overflow-x-auto"><table class="w-full text-sm"><thead class="bg-pmes-50 text-pmes-400"><tr><th class="text-left px-4 py-3 font-semibold">Prefixo</th><th class="text-left px-4 py-3 font-semibold">Modelo</th><th class="text-left px-4 py-3 font-semibold">Placa</th><th class="text-left px-4 py-3 font-semibold">Modalidade</th><th class="text-center px-4 py-3 font-semibold">Faixa de Km</th><th class="text-center px-4 py-3 font-semibold">Status</th><th class="text-center px-4 py-3 font-semibold">ISV</th><th class="text-center px-4 py-3 font-semibold">Faixa</th><th class="text-center px-4 py-3 font-semibold">Ações</th></tr></thead><tbody id="tbFrota" class="divide-y divide-gray-100"></tbody></table></div></div>
     </section>
@@ -242,14 +246,15 @@ tailwind.config = {
 <!-- ===== MODAIS ===== -->
 <div id="mdlViatura" class="fixed inset-0 z-50 hidden items-center justify-center modal-bg">
   <div class="bg-white rounded-2xl shadow-2xl w-full max-w-lg mx-4 max-h-[90vh] overflow-y-auto">
-    <div class="flex items-center justify-between p-5 border-b"><h3 class="font-bold text-pmes-400"><i class="fas fa-truck mr-2"></i>Nova Viatura</h3><button onclick="closeModal('mdlViatura')" class="text-gray-400 hover:text-gray-600"><i class="fas fa-times"></i></button></div>
+    <div class="flex items-center justify-between p-5 border-b"><h3 class="font-bold text-pmes-400" id="mdlVtrTitle"><i class="fas fa-truck mr-2"></i>Nova Viatura</h3><button onclick="closeModal('mdlViatura')" class="text-gray-400 hover:text-gray-600"><i class="fas fa-times"></i></button></div>
+    <input type="hidden" id="mdlVtrEditPref">
     <div class="p-5 space-y-4">
-      <div class="grid grid-cols-2 gap-4"><div><label class="text-xs font-medium text-gray-600">Prefixo</label><input type="text" class="w-full border rounded-lg px-3 py-2 text-sm mt-1" placeholder="VTR-035"></div><div><label class="text-xs font-medium text-gray-600">Placa</label><input type="text" class="w-full border rounded-lg px-3 py-2 text-sm mt-1" placeholder="ABC-1D23"></div></div>
-      <div class="grid grid-cols-2 gap-4"><div><label class="text-xs font-medium text-gray-600">Modelo</label><input type="text" class="w-full border rounded-lg px-3 py-2 text-sm mt-1" placeholder="Hilux SW4"></div><div><label class="text-xs font-medium text-gray-600">Ano Fabricação</label><input type="number" class="w-full border rounded-lg px-3 py-2 text-sm mt-1" placeholder="2024" value="2024"></div></div>
-      <div class="grid grid-cols-2 gap-4"><div><label class="text-xs font-medium text-gray-600">Faixa de Km</label><select class="w-full border rounded-lg px-3 py-2 text-sm mt-1" id="mdlVtrFaixa"></select></div><div><label class="text-xs font-medium text-gray-600">Custo Manut. Acum. (R$)</label><input type="number" class="w-full border rounded-lg px-3 py-2 text-sm mt-1" placeholder="0" value="0"></div></div>
-      <div><label class="text-xs font-medium text-gray-600">Modalidade Vinculada</label><select class="w-full border rounded-lg px-3 py-2 text-sm mt-1" id="mdlVtrMod"></select></div>
+      <div class="grid grid-cols-2 gap-4"><div><label class="text-xs font-medium text-gray-600">Prefixo *</label><input type="text" id="mdlVtrPref" class="w-full border rounded-lg px-3 py-2 text-sm mt-1" placeholder="VTR-035"></div><div><label class="text-xs font-medium text-gray-600">Placa *</label><input type="text" id="mdlVtrPlaca" class="w-full border rounded-lg px-3 py-2 text-sm mt-1" placeholder="ABC-1D23"></div></div>
+      <div class="grid grid-cols-2 gap-4"><div><label class="text-xs font-medium text-gray-600">Modelo *</label><input type="text" id="mdlVtrModelo" class="w-full border rounded-lg px-3 py-2 text-sm mt-1" placeholder="Hilux SW4"></div><div><label class="text-xs font-medium text-gray-600">Ano Fabricação *</label><input type="number" id="mdlVtrAno" class="w-full border rounded-lg px-3 py-2 text-sm mt-1" placeholder="2024" value="2024"></div></div>
+      <div class="grid grid-cols-2 gap-4"><div><label class="text-xs font-medium text-gray-600">Faixa de Km</label><select class="w-full border rounded-lg px-3 py-2 text-sm mt-1" id="mdlVtrFaixa"></select></div><div><label class="text-xs font-medium text-gray-600">Custo Manut. Acum. (R$)</label><input type="number" id="mdlVtrCusto" class="w-full border rounded-lg px-3 py-2 text-sm mt-1" placeholder="0" value="0"></div></div>
+      <div class="grid grid-cols-2 gap-4"><div><label class="text-xs font-medium text-gray-600">Modalidade Vinculada</label><select class="w-full border rounded-lg px-3 py-2 text-sm mt-1" id="mdlVtrMod"></select></div><div><label class="text-xs font-medium text-gray-600">Status</label><select class="w-full border rounded-lg px-3 py-2 text-sm mt-1" id="mdlVtrStatus"><option>Operacional</option><option>Manutenção Preventiva</option><option>Manutenção Corretiva</option><option>Reserva</option><option>Inoperante</option></select></div></div>
     </div>
-    <div class="p-5 border-t flex justify-end gap-3"><button onclick="closeModal('mdlViatura')" class="px-4 py-2 text-sm text-gray-600 border rounded-lg hover:bg-gray-50">Cancelar</button><button onclick="closeModal('mdlViatura')" class="px-4 py-2 text-sm bg-pmes-400 text-white rounded-lg hover:bg-pmes-300">Cadastrar</button></div>
+    <div class="p-5 border-t flex justify-end gap-3"><button onclick="closeModal('mdlViatura')" class="px-4 py-2 text-sm text-gray-600 border rounded-lg hover:bg-gray-50">Cancelar</button><button onclick="salvarViatura()" class="px-4 py-2 text-sm bg-pmes-400 text-white rounded-lg hover:bg-pmes-300" id="mdlVtrBtnSave">Cadastrar</button></div>
   </div>
 </div>
 
@@ -294,8 +299,8 @@ const FAIXAS_KM = [
 ];
 function getFaixaKm(km){return(FAIXAS_KM.find(f=>km>=f.min&&km<=f.max)||FAIXAS_KM[5]).label}
 
-// ========== FROTA MOCK (34 VTR) ==========
-const VTR = [
+// ========== FROTA — DADOS INICIAIS (34 VTR) ==========
+const VTR_DEFAULT = [
   {pref:'VTR-001',mod:'RO',   modelo:'Hilux SW4',     placa:'QRA-1A01',ano:2022,km:98000, custoMan:12000,status:'Operacional'},
   {pref:'VTR-002',mod:'RO',   modelo:'Ranger XLS',    placa:'QRA-2B02',ano:2021,km:115000,custoMan:18500,status:'Operacional'},
   {pref:'VTR-003',mod:'RO',   modelo:'Hilux CD',      placa:'QRA-3C03',ano:2023,km:72000, custoMan:5200, status:'Operacional'},
@@ -331,6 +336,84 @@ const VTR = [
   {pref:'VTR-033',mod:'RES',  modelo:'Toro',          placa:'QRI-5E33',ano:2019,km:155000,custoMan:29000,status:'Inoperante'},
   {pref:'VTR-034',mod:'RES',  modelo:'Hilux CD',      placa:'QRI-6F34',ano:2024,km:9500,  custoMan:300,  status:'Operacional'},
 ];
+
+// ========== PERSISTÊNCIA (localStorage) ==========
+function saveVTR(){localStorage.setItem('sigv_vtr',JSON.stringify(VTR))}
+function loadVTR(){try{const s=localStorage.getItem('sigv_vtr');return s?JSON.parse(s):null}catch(e){return null}}
+let VTR=loadVTR()||VTR_DEFAULT.map(v=>({...v}));
+
+function abrirNovaViatura(){
+  document.getElementById('mdlVtrEditPref').value='';
+  document.getElementById('mdlVtrTitle').innerHTML='<i class="fas fa-truck mr-2"></i>Nova Viatura';
+  document.getElementById('mdlVtrBtnSave').textContent='Cadastrar';
+  document.getElementById('mdlVtrPref').value='';document.getElementById('mdlVtrPref').disabled=false;
+  document.getElementById('mdlVtrPlaca').value='';
+  document.getElementById('mdlVtrModelo').value='';
+  document.getElementById('mdlVtrAno').value=new Date().getFullYear();
+  document.getElementById('mdlVtrFaixa').value='F1';
+  document.getElementById('mdlVtrCusto').value='0';
+  document.getElementById('mdlVtrMod').value=MODALIDADES[0].id;
+  document.getElementById('mdlVtrStatus').value='Operacional';
+  openModal('mdlViatura');
+}
+
+function editarViatura(pref){
+  const v=VTR.find(x=>x.pref===pref);if(!v)return;
+  document.getElementById('mdlVtrEditPref').value=pref;
+  document.getElementById('mdlVtrTitle').innerHTML='<i class="fas fa-pen mr-2"></i>Editar Viatura';
+  document.getElementById('mdlVtrBtnSave').textContent='Salvar';
+  document.getElementById('mdlVtrPref').value=v.pref;document.getElementById('mdlVtrPref').disabled=true;
+  document.getElementById('mdlVtrPlaca').value=v.placa;
+  document.getElementById('mdlVtrModelo').value=v.modelo;
+  document.getElementById('mdlVtrAno').value=v.ano;
+  const fk=FAIXAS_KM.find(f=>v.km>=f.min&&v.km<=f.max)||FAIXAS_KM[0];
+  document.getElementById('mdlVtrFaixa').value=fk.id;
+  document.getElementById('mdlVtrCusto').value=v.custoMan;
+  document.getElementById('mdlVtrMod').value=v.mod;
+  document.getElementById('mdlVtrStatus').value=v.status;
+  openModal('mdlViatura');
+}
+
+function salvarViatura(){
+  const editPref=document.getElementById('mdlVtrEditPref').value;
+  const pref=document.getElementById('mdlVtrPref').value.trim().toUpperCase();
+  const placa=document.getElementById('mdlVtrPlaca').value.trim().toUpperCase();
+  const modelo=document.getElementById('mdlVtrModelo').value.trim();
+  const ano=parseInt(document.getElementById('mdlVtrAno').value);
+  const faixaId=document.getElementById('mdlVtrFaixa').value;
+  const custoMan=parseFloat(document.getElementById('mdlVtrCusto').value)||0;
+  const mod=document.getElementById('mdlVtrMod').value;
+  const status=document.getElementById('mdlVtrStatus').value;
+  if(!pref||!placa||!modelo||!ano||isNaN(ano)){alert('Preencha todos os campos obrigatórios (*).');return}
+  const faixa=FAIXAS_KM.find(f=>f.id===faixaId)||FAIXAS_KM[0];
+  const km=faixa.mid;
+  if(editPref){
+    const idx=VTR.findIndex(v=>v.pref===editPref);
+    if(idx>=0)VTR[idx]={pref:editPref,mod,modelo,placa,ano,km,custoMan,status};
+  }else{
+    if(VTR.find(v=>v.pref===pref)){alert('Prefixo "'+pref+'" já cadastrado.');return}
+    VTR.push({pref,mod,modelo,placa,ano,km,custoMan,status});
+  }
+  saveVTR();closeModal('mdlViatura');renderFrota();refreshSelects();
+}
+
+function excluirViatura(pref){
+  if(!confirm('Confirma exclusão da viatura '+pref+'?\nEsta ação não poderá ser desfeita.'))return;
+  const idx=VTR.findIndex(v=>v.pref===pref);
+  if(idx>=0)VTR.splice(idx,1);
+  saveVTR();renderFrota();refreshSelects();
+}
+
+function resetVTR(){
+  if(!confirm('Restaurar frota para os dados iniciais padrão (34 VTR)?\nTodos os dados atuais serão substituídos.'))return;
+  VTR.length=0;VTR_DEFAULT.forEach(v=>VTR.push({...v}));
+  saveVTR();renderFrota();refreshSelects();
+}
+
+function refreshSelects(){
+  const sel=document.getElementById('mdlManVtr');
+  if(sel){sel.innerHTML='';VTR.forEach(v=>{const o=document.createElement('option');o.value=v.pref;o.textContent=v.pref+' — '+v.modelo;sel.appendChild(o)})}
+}
 
 const MANUTENCOES = [
   {vtr:'VTR-007',tipo:'Corretiva',desc:'Reparo caixa de câmbio',data:'2026-06-22',custo:8500,st:'Agendada'},
@@ -467,7 +550,8 @@ function renderFrota(){
     return ms&&mst&&mm;
   });
   const modNome=id=>(MODALIDADES.find(m=>m.id===id)||{}).nome||id;
-  document.getElementById('tbFrota').innerHTML=filtered.map(v=>{const d=calcISVData(v);return`<tr class="hover:bg-gray-50"><td class="px-4 py-3 font-semibold text-pmes-400">${v.pref}</td><td class="px-4 py-3 text-gray-600">${v.modelo}</td><td class="px-4 py-3 text-gray-500 font-mono text-xs">${v.placa}</td><td class="px-4 py-3 text-xs text-gray-500">${modNome(v.mod)}</td><td class="px-4 py-3 text-center text-gray-600 text-xs">${getFaixaKm(v.km)}</td><td class="px-4 py-3 text-center">${stBadge(v.status)}</td><td class="px-4 py-3 text-center font-bold ${d.faixa==='D'?'text-red-600':d.faixa==='C'?'text-amber-600':d.faixa==='B'?'text-blue-600':'text-green-600'}">${d.isv.toFixed(1)}</td><td class="px-4 py-3 text-center">${faixaBadge(d.faixa,d.faixaCor)}</td><td class="px-4 py-3 text-center"><button class="text-pmes-300 hover:text-pmes-400 mx-1" title="Detalhes"><i class="fas fa-eye text-xs"></i></button></td></tr>`}).join('');
+  document.getElementById('frotaCount').textContent=VTR.length+' VTR cadastradas';
+  document.getElementById('tbFrota').innerHTML=filtered.map(v=>{const d=calcISVData(v);return`<tr class="hover:bg-gray-50"><td class="px-4 py-3 font-semibold text-pmes-400">${v.pref}</td><td class="px-4 py-3 text-gray-600">${v.modelo}</td><td class="px-4 py-3 text-gray-500 font-mono text-xs">${v.placa}</td><td class="px-4 py-3 text-xs text-gray-500">${modNome(v.mod)}</td><td class="px-4 py-3 text-center text-gray-600 text-xs">${getFaixaKm(v.km)}</td><td class="px-4 py-3 text-center">${stBadge(v.status)}</td><td class="px-4 py-3 text-center font-bold ${d.faixa==='D'?'text-red-600':d.faixa==='C'?'text-amber-600':d.faixa==='B'?'text-blue-600':'text-green-600'}">${d.isv.toFixed(1)}</td><td class="px-4 py-3 text-center">${faixaBadge(d.faixa,d.faixaCor)}</td><td class="px-4 py-3 text-center whitespace-nowrap"><button class="text-pmes-300 hover:text-pmes-400 mx-0.5" title="Editar" onclick="editarViatura('${v.pref}')"><i class="fas fa-pen text-xs"></i></button><button class="text-red-400 hover:text-red-600 mx-0.5" title="Excluir" onclick="excluirViatura('${v.pref}')"><i class="fas fa-trash text-xs"></i></button></td></tr>`}).join('');
 }
 
 // ========== MANUTENÇÃO ==========
