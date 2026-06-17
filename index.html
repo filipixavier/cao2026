@@ -1,0 +1,1034 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>SIGV - Sistema Integrado de Gestão de Viaturas</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+    <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.1/dist/chart.umd.min.js"></script>
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        navy: { 50:'#f0f3f9', 100:'#d9e0ef', 200:'#b3c1df', 300:'#8da2cf', 400:'#6783bf', 500:'#4164af', 600:'#34508c', 700:'#273c69', 800:'#1a2846', 900:'#0d1423', 950:'#060a11' },
+                        olive: { 50:'#f6f7f0', 100:'#e8ead6', 200:'#d1d5ad', 300:'#bac084', 400:'#a3ab5b', 500:'#8b9340', 600:'#6f7633', 700:'#535826', 800:'#373b1a', 900:'#1c1d0d' },
+                        gold: { 400:'#e2c55a', 500:'#d4af37', 600:'#b8960e' }
+                    }
+                }
+            }
+        }
+    </script>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap');
+        * { font-family: 'Inter', sans-serif; }
+        ::-webkit-scrollbar { width: 6px; }
+        ::-webkit-scrollbar-track { background: #1a2846; }
+        ::-webkit-scrollbar-thumb { background: #4164af; border-radius: 3px; }
+        .sidebar-link { transition: all 0.2s ease; }
+        .sidebar-link:hover, .sidebar-link.active { background: rgba(65,100,175,0.25); border-left: 3px solid #d4a f37; }
+        .sidebar-link.active { background: rgba(65,100,175,0.35); }
+        .card-hover { transition: all 0.3s ease; }
+        .card-hover:hover { transform: translateY(-2px); box-shadow: 0 8px 25px rgba(0,0,0,0.1); }
+        .fade-in { animation: fadeIn 0.3s ease-in; }
+        @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
+        .status-dot { width: 10px; height: 10px; border-radius: 50%; display: inline-block; }
+        .progress-bar { transition: width 0.8s ease; }
+        .tab-btn.active { border-bottom: 2px solid #d4af37; color: #1a2846; font-weight: 600; }
+        .modal-overlay { background: rgba(0,0,0,0.5); backdrop-filter: blur(2px); }
+        .wear-indicator { height: 8px; border-radius: 4px; overflow: hidden; }
+        .tooltip { position: relative; }
+        .tooltip:hover::after { content: attr(data-tip); position: absolute; bottom: 100%; left: 50%; transform: translateX(-50%); background: #1a2846; color: white; padding: 4px 8px; border-radius: 4px; font-size: 12px; white-space: nowrap; z-index: 50; }
+    </style>
+</head>
+<body class="bg-gray-100 min-h-screen">
+
+<!-- SIDEBAR -->
+<aside id="sidebar" class="fixed top-0 left-0 h-full w-64 bg-navy-800 text-white z-40 flex flex-col transition-transform duration-300">
+    <!-- Logo -->
+    <div class="p-5 border-b border-navy-700">
+        <div class="flex items-center gap-3">
+            <div class="w-10 h-10 bg-gold-500 rounded-lg flex items-center justify-center">
+                <i class="fas fa-shield-halved text-navy-900 text-lg"></i>
+            </div>
+            <div>
+                <h1 class="font-bold text-sm tracking-wide">SIGV</h1>
+                <p class="text-[10px] text-navy-300 leading-tight">Sistema Integrado de<br>Gestão de Viaturas</p>
+            </div>
+        </div>
+    </div>
+
+    <!-- User Info -->
+    <div class="p-4 border-b border-navy-700">
+        <div class="flex items-center gap-3">
+            <div class="w-9 h-9 bg-navy-600 rounded-full flex items-center justify-center">
+                <i class="fas fa-user text-sm text-navy-200"></i>
+            </div>
+            <div>
+                <p class="text-sm font-medium" id="userName">Cap Silva</p>
+                <p class="text-[11px] text-gold-400" id="userRole">Administrador</p>
+            </div>
+        </div>
+    </div>
+
+    <!-- Navigation -->
+    <nav class="flex-1 overflow-y-auto py-3">
+        <p class="px-5 text-[10px] text-navy-400 uppercase tracking-widest mb-2">Principal</p>
+        <a href="#" class="sidebar-link active flex items-center gap-3 px-5 py-2.5 text-sm text-navy-100 border-l-3 border-transparent" data-page="dashboard" onclick="navigateTo('dashboard')">
+            <i class="fas fa-chart-line w-5 text-center text-navy-300"></i> Painel Geral
+        </a>
+
+        <p class="px-5 text-[10px] text-navy-400 uppercase tracking-widest mt-5 mb-2">
+            <i class="fas fa-wrench mr-1"></i> P4 — Logística
+        </p>
+        <a href="#" class="sidebar-link flex items-center gap-3 px-5 py-2.5 text-sm text-navy-100 border-l-3 border-transparent" data-page="frota" onclick="navigateTo('frota')">
+            <i class="fas fa-truck w-5 text-center text-navy-300"></i> Frota de Viaturas
+        </a>
+        <a href="#" class="sidebar-link flex items-center gap-3 px-5 py-2.5 text-sm text-navy-100 border-l-3 border-transparent" data-page="manutencao" onclick="navigateTo('manutencao')">
+            <i class="fas fa-tools w-5 text-center text-navy-300"></i> Manutenção
+        </a>
+        <a href="#" class="sidebar-link flex items-center gap-3 px-5 py-2.5 text-sm text-navy-100 border-l-3 border-transparent" data-page="combustivel" onclick="navigateTo('combustivel')">
+            <i class="fas fa-gas-pump w-5 text-center text-navy-300"></i> Combustível
+        </a>
+        <a href="#" class="sidebar-link flex items-center gap-3 px-5 py-2.5 text-sm text-navy-100 border-l-3 border-transparent" data-page="desgaste" onclick="navigateTo('desgaste')">
+            <i class="fas fa-heart-pulse w-5 text-center text-navy-300"></i> Desgaste e Vida Útil
+        </a>
+
+        <p class="px-5 text-[10px] text-navy-400 uppercase tracking-widest mt-5 mb-2">
+            <i class="fas fa-map mr-1"></i> P3 — Planejamento
+        </p>
+        <a href="#" class="sidebar-link flex items-center gap-3 px-5 py-2.5 text-sm text-navy-100 border-l-3 border-transparent" data-page="disponibilidade" onclick="navigateTo('disponibilidade')">
+            <i class="fas fa-calendar-check w-5 text-center text-navy-300"></i> Disponibilidade
+        </a>
+        <a href="#" class="sidebar-link flex items-center gap-3 px-5 py-2.5 text-sm text-navy-100 border-l-3 border-transparent" data-page="operacoes" onclick="navigateTo('operacoes')">
+            <i class="fas fa-bullseye w-5 text-center text-navy-300"></i> Operações
+        </a>
+
+        <p class="px-5 text-[10px] text-navy-400 uppercase tracking-widest mt-5 mb-2">
+            <i class="fas fa-users mr-1"></i> Pelotões
+        </p>
+        <a href="#" class="sidebar-link flex items-center gap-3 px-5 py-2.5 text-sm text-navy-100 border-l-3 border-transparent" data-page="solicitacoes" onclick="navigateTo('solicitacoes')">
+            <i class="fas fa-hand-paper w-5 text-center text-navy-300"></i> Solicitações
+        </a>
+        <a href="#" class="sidebar-link flex items-center gap-3 px-5 py-2.5 text-sm text-navy-100 border-l-3 border-transparent" data-page="alocacoes" onclick="navigateTo('alocacoes')">
+            <i class="fas fa-arrows-turn-to-dots w-5 text-center text-navy-300"></i> Alocações Atuais
+        </a>
+
+        <p class="px-5 text-[10px] text-navy-400 uppercase tracking-widest mt-5 mb-2">
+            <i class="fas fa-chart-bar mr-1"></i> Relatórios
+        </p>
+        <a href="#" class="sidebar-link flex items-center gap-3 px-5 py-2.5 text-sm text-navy-100 border-l-3 border-transparent" data-page="relatorios" onclick="navigateTo('relatorios')">
+            <i class="fas fa-file-chart-line w-5 text-center text-navy-300"></i> Relatórios Gerais
+        </a>
+    </nav>
+
+    <!-- Footer -->
+    <div class="p-4 border-t border-navy-700 text-center">
+        <p class="text-[10px] text-navy-400">SIGV v1.0 — 2026</p>
+    </div>
+</aside>
+
+<!-- MOBILE MENU TOGGLE -->
+<button id="menuToggle" class="fixed top-4 left-4 z-50 lg:hidden bg-navy-800 text-white p-2 rounded-lg shadow-lg" onclick="toggleSidebar()">
+    <i class="fas fa-bars"></i>
+</button>
+
+<!-- MAIN CONTENT -->
+<main class="lg:ml-64 min-h-screen">
+
+    <!-- TOP BAR -->
+    <header class="bg-white shadow-sm border-b border-gray-200 px-6 py-3 flex items-center justify-between sticky top-0 z-30">
+        <div>
+            <h2 class="text-lg font-bold text-navy-800" id="pageTitle">Painel Geral</h2>
+            <p class="text-xs text-gray-400" id="pageSubtitle">Visão geral da frota e operações</p>
+        </div>
+        <div class="flex items-center gap-4">
+            <span class="text-xs text-gray-400"><i class="far fa-calendar mr-1"></i> <span id="currentDate"></span></span>
+            <button class="relative text-gray-400 hover:text-navy-600 transition">
+                <i class="fas fa-bell text-lg"></i>
+                <span class="absolute -top-1 -right-1 w-4 h-4 bg-red-500 text-white text-[9px] rounded-full flex items-center justify-center">3</span>
+            </button>
+        </div>
+    </header>
+
+    <!-- PAGE CONTENT CONTAINER -->
+    <div class="p-6" id="pageContent">
+
+        <!-- ==================== DASHBOARD ==================== -->
+        <section id="page-dashboard" class="page-section fade-in">
+            <!-- KPI Cards -->
+            <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-5 mb-6">
+                <div class="bg-white rounded-xl shadow-sm p-5 card-hover border-l-4 border-blue-500">
+                    <div class="flex items-center justify-between">
+                        <div>
+                            <p class="text-xs text-gray-500 uppercase tracking-wide">Total de Viaturas</p>
+                            <p class="text-3xl font-bold text-navy-800 mt-1">24</p>
+                            <p class="text-xs text-gray-400 mt-1">Frota completa</p>
+                        </div>
+                        <div class="w-12 h-12 bg-blue-50 rounded-xl flex items-center justify-center">
+                            <i class="fas fa-truck text-blue-500 text-xl"></i>
+                        </div>
+                    </div>
+                </div>
+                <div class="bg-white rounded-xl shadow-sm p-5 card-hover border-l-4 border-green-500">
+                    <div class="flex items-center justify-between">
+                        <div>
+                            <p class="text-xs text-gray-500 uppercase tracking-wide">Operacionais</p>
+                            <p class="text-3xl font-bold text-green-600 mt-1">18</p>
+                            <p class="text-xs text-green-500 mt-1"><i class="fas fa-arrow-up"></i> 75% da frota</p>
+                        </div>
+                        <div class="w-12 h-12 bg-green-50 rounded-xl flex items-center justify-center">
+                            <i class="fas fa-circle-check text-green-500 text-xl"></i>
+                        </div>
+                    </div>
+                </div>
+                <div class="bg-white rounded-xl shadow-sm p-5 card-hover border-l-4 border-amber-500">
+                    <div class="flex items-center justify-between">
+                        <div>
+                            <p class="text-xs text-gray-500 uppercase tracking-wide">Em Manutenção</p>
+                            <p class="text-3xl font-bold text-amber-600 mt-1">4</p>
+                            <p class="text-xs text-amber-500 mt-1">2 preventivas, 2 corretivas</p>
+                        </div>
+                        <div class="w-12 h-12 bg-amber-50 rounded-xl flex items-center justify-center">
+                            <i class="fas fa-wrench text-amber-500 text-xl"></i>
+                        </div>
+                    </div>
+                </div>
+                <div class="bg-white rounded-xl shadow-sm p-5 card-hover border-l-4 border-red-500">
+                    <div class="flex items-center justify-between">
+                        <div>
+                            <p class="text-xs text-gray-500 uppercase tracking-wide">Inoperantes</p>
+                            <p class="text-3xl font-bold text-red-600 mt-1">2</p>
+                            <p class="text-xs text-red-400 mt-1">Aguardando peças</p>
+                        </div>
+                        <div class="w-12 h-12 bg-red-50 rounded-xl flex items-center justify-center">
+                            <i class="fas fa-triangle-exclamation text-red-500 text-xl"></i>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Charts Row -->
+            <div class="grid grid-cols-1 lg:grid-cols-3 gap-5 mb-6">
+                <div class="lg:col-span-2 bg-white rounded-xl shadow-sm p-5">
+                    <h3 class="font-semibold text-navy-800 mb-4"><i class="fas fa-chart-area text-navy-400 mr-2"></i>Custos de Manutenção (Últimos 6 Meses)</h3>
+                    <canvas id="chartCustos" height="120"></canvas>
+                </div>
+                <div class="bg-white rounded-xl shadow-sm p-5">
+                    <h3 class="font-semibold text-navy-800 mb-4"><i class="fas fa-chart-pie text-navy-400 mr-2"></i>Status da Frota</h3>
+                    <canvas id="chartStatus" height="180"></canvas>
+                </div>
+            </div>
+
+            <!-- Bottom Row -->
+            <div class="grid grid-cols-1 lg:grid-cols-2 gap-5">
+                <!-- Próximas Manutenções -->
+                <div class="bg-white rounded-xl shadow-sm p-5">
+                    <h3 class="font-semibold text-navy-800 mb-4"><i class="fas fa-clock text-amber-500 mr-2"></i>Próximas Manutenções Preventivas</h3>
+                    <div class="space-y-3" id="proxManutencoes"></div>
+                </div>
+                <!-- Operações Ativas -->
+                <div class="bg-white rounded-xl shadow-sm p-5">
+                    <h3 class="font-semibold text-navy-800 mb-4"><i class="fas fa-bullseye text-green-500 mr-2"></i>Operações em Andamento</h3>
+                    <div class="space-y-3" id="opsAtivas"></div>
+                </div>
+            </div>
+        </section>
+
+        <!-- ==================== FROTA DE VIATURAS ==================== -->
+        <section id="page-frota" class="page-section hidden fade-in">
+            <div class="flex flex-wrap items-center justify-between gap-3 mb-5">
+                <div class="flex items-center gap-3">
+                    <div class="relative">
+                        <i class="fas fa-search absolute left-3 top-1/2 -translate-y-1/2 text-gray-400 text-sm"></i>
+                        <input type="text" placeholder="Buscar viatura..." class="pl-9 pr-4 py-2 border border-gray-200 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-navy-300 w-64" id="searchFrota" oninput="filterFrota()">
+                    </div>
+                    <select class="border border-gray-200 rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-navy-300" id="filterStatus" onchange="filterFrota()">
+                        <option value="">Todos os Status</option>
+                        <option value="Operacional">Operacional</option>
+                        <option value="Em Manutenção">Em Manutenção</option>
+                        <option value="Inoperante">Inoperante</option>
+                    </select>
+                </div>
+                <button class="bg-navy-700 text-white px-4 py-2 rounded-lg text-sm font-medium hover:bg-navy-600 transition" onclick="openModal('modalViatura')">
+                    <i class="fas fa-plus mr-2"></i>Nova Viatura
+                </button>
+            </div>
+
+            <div class="bg-white rounded-xl shadow-sm overflow-hidden">
+                <div class="overflow-x-auto">
+                    <table class="w-full text-sm">
+                        <thead class="bg-navy-50 text-navy-700">
+                            <tr>
+                                <th class="text-left px-5 py-3 font-semibold">Prefixo</th>
+                                <th class="text-left px-5 py-3 font-semibold">Modelo</th>
+                                <th class="text-left px-5 py-3 font-semibold">Placa</th>
+                                <th class="text-left px-5 py-3 font-semibold">Ano</th>
+                                <th class="text-right px-5 py-3 font-semibold">Km Atual</th>
+                                <th class="text-center px-5 py-3 font-semibold">Status</th>
+                                <th class="text-center px-5 py-3 font-semibold">Condição</th>
+                                <th class="text-center px-5 py-3 font-semibold">Lotação</th>
+                                <th class="text-center px-5 py-3 font-semibold">Ações</th>
+                            </tr>
+                        </thead>
+                        <tbody id="tabelaFrota" class="divide-y divide-gray-100"></tbody>
+                    </table>
+                </div>
+            </div>
+        </section>
+
+        <!-- ==================== MANUTENÇÃO ==================== -->
+        <section id="page-manutencao" class="page-section hidden fade-in">
+            <div class="flex flex-wrap gap-3 mb-5">
+                <button class="tab-btn active px-4 py-2 text-sm font-medium text-gray-500 border-b-2 border-transparent transition" onclick="switchTab(this, 'tabAgendadas')">Agendadas</button>
+                <button class="tab-btn px-4 py-2 text-sm font-medium text-gray-500 border-b-2 border-transparent transition" onclick="switchTab(this, 'tabHistorico')">Histórico</button>
+                <button class="tab-btn px-4 py-2 text-sm font-medium text-gray-500 border-b-2 border-transparent transition" onclick="switchTab(this, 'tabCustos')">Custos</button>
+                <div class="ml-auto">
+                    <button class="bg-navy-700 text-white px-4 py-2 rounded-lg text-sm font-medium hover:bg-navy-600 transition" onclick="openModal('modalManutencao')">
+                        <i class="fas fa-plus mr-2"></i>Nova Manutenção
+                    </button>
+                </div>
+            </div>
+
+            <!-- Tab Agendadas -->
+            <div id="tabAgendadas" class="tab-content">
+                <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4" id="cardsManutencao"></div>
+            </div>
+            <!-- Tab Histórico -->
+            <div id="tabHistorico" class="tab-content hidden">
+                <div class="bg-white rounded-xl shadow-sm overflow-hidden">
+                    <table class="w-full text-sm">
+                        <thead class="bg-navy-50 text-navy-700">
+                            <tr>
+                                <th class="text-left px-5 py-3 font-semibold">Data</th>
+                                <th class="text-left px-5 py-3 font-semibold">Viatura</th>
+                                <th class="text-left px-5 py-3 font-semibold">Tipo</th>
+                                <th class="text-left px-5 py-3 font-semibold">Descrição</th>
+                                <th class="text-right px-5 py-3 font-semibold">Custo (R$)</th>
+                                <th class="text-center px-5 py-3 font-semibold">Status</th>
+                            </tr>
+                        </thead>
+                        <tbody id="tabelaHistorico" class="divide-y divide-gray-100"></tbody>
+                    </table>
+                </div>
+            </div>
+            <!-- Tab Custos -->
+            <div id="tabCustos" class="tab-content hidden">
+                <div class="grid grid-cols-1 sm:grid-cols-3 gap-5 mb-5">
+                    <div class="bg-white rounded-xl shadow-sm p-5 border-l-4 border-blue-500">
+                        <p class="text-xs text-gray-500 uppercase">Custo Total (2026)</p>
+                        <p class="text-2xl font-bold text-navy-800 mt-1">R$ 47.850,00</p>
+                    </div>
+                    <div class="bg-white rounded-xl shadow-sm p-5 border-l-4 border-green-500">
+                        <p class="text-xs text-gray-500 uppercase">Preventiva</p>
+                        <p class="text-2xl font-bold text-green-600 mt-1">R$ 18.200,00</p>
+                    </div>
+                    <div class="bg-white rounded-xl shadow-sm p-5 border-l-4 border-red-500">
+                        <p class="text-xs text-gray-500 uppercase">Corretiva</p>
+                        <p class="text-2xl font-bold text-red-600 mt-1">R$ 29.650,00</p>
+                    </div>
+                </div>
+                <div class="bg-white rounded-xl shadow-sm p-5">
+                    <h3 class="font-semibold text-navy-800 mb-4">Custos por Viatura</h3>
+                    <canvas id="chartCustosViatura" height="100"></canvas>
+                </div>
+            </div>
+        </section>
+
+        <!-- ==================== COMBUSTÍVEL ==================== -->
+        <section id="page-combustivel" class="page-section hidden fade-in">
+            <div class="grid grid-cols-1 sm:grid-cols-3 gap-5 mb-6">
+                <div class="bg-white rounded-xl shadow-sm p-5 border-l-4 border-blue-500">
+                    <p class="text-xs text-gray-500 uppercase">Consumo Mensal</p>
+                    <p class="text-2xl font-bold text-navy-800 mt-1">3.420 L</p>
+                    <p class="text-xs text-gray-400">Junho/2026</p>
+                </div>
+                <div class="bg-white rounded-xl shadow-sm p-5 border-l-4 border-green-500">
+                    <p class="text-xs text-gray-500 uppercase">Média da Frota</p>
+                    <p class="text-2xl font-bold text-green-600 mt-1">8,7 km/L</p>
+                    <p class="text-xs text-gray-400">Meta: 9,0 km/L</p>
+                </div>
+                <div class="bg-white rounded-xl shadow-sm p-5 border-l-4 border-amber-500">
+                    <p class="text-xs text-gray-500 uppercase">Gasto Total</p>
+                    <p class="text-2xl font-bold text-amber-600 mt-1">R$ 19.836,00</p>
+                    <p class="text-xs text-gray-400">R$ 5,80/L médio</p>
+                </div>
+            </div>
+            <div class="grid grid-cols-1 lg:grid-cols-2 gap-5">
+                <div class="bg-white rounded-xl shadow-sm p-5">
+                    <h3 class="font-semibold text-navy-800 mb-4"><i class="fas fa-chart-bar text-navy-400 mr-2"></i>Consumo por Viatura (Litros/Mês)</h3>
+                    <canvas id="chartConsumo" height="160"></canvas>
+                </div>
+                <div class="bg-white rounded-xl shadow-sm p-5">
+                    <h3 class="font-semibold text-navy-800 mb-4"><i class="fas fa-gas-pump text-navy-400 mr-2"></i>Últimos Abastecimentos</h3>
+                    <div class="space-y-3" id="listaAbastecimentos"></div>
+                </div>
+            </div>
+        </section>
+
+        <!-- ==================== DESGASTE E VIDA ÚTIL ==================== -->
+        <section id="page-desgaste" class="page-section hidden fade-in">
+            <div class="bg-white rounded-xl shadow-sm p-5 mb-5">
+                <h3 class="font-semibold text-navy-800 mb-2"><i class="fas fa-info-circle text-blue-500 mr-2"></i>Índice de Saúde da Frota</h3>
+                <p class="text-xs text-gray-500 mb-4">Monitoramento do desgaste dos componentes críticos para maximizar a vida útil e reduzir custos de manutenção corretiva.</p>
+                <div class="flex items-center gap-4">
+                    <div class="flex-1 wear-indicator bg-gray-200">
+                        <div class="h-full bg-gradient-to-r from-green-500 via-yellow-400 to-green-500 progress-bar" style="width:72%"></div>
+                    </div>
+                    <span class="text-lg font-bold text-navy-800">72%</span>
+                    <span class="text-xs text-gray-500">Saúde Geral</span>
+                </div>
+            </div>
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-5" id="cardsDesgaste"></div>
+        </section>
+
+        <!-- ==================== DISPONIBILIDADE (P3) ==================== -->
+        <section id="page-disponibilidade" class="page-section hidden fade-in">
+            <div class="bg-white rounded-xl shadow-sm p-5 mb-5">
+                <h3 class="font-semibold text-navy-800 mb-4"><i class="fas fa-calendar-alt text-navy-400 mr-2"></i>Disponibilidade de Viaturas — Semana Atual</h3>
+                <div class="overflow-x-auto">
+                    <table class="w-full text-sm" id="tabelaDisponibilidade">
+                        <thead class="bg-navy-50 text-navy-700">
+                            <tr>
+                                <th class="text-left px-4 py-3 font-semibold">Viatura</th>
+                                <th class="text-center px-2 py-3 font-semibold">Seg</th>
+                                <th class="text-center px-2 py-3 font-semibold">Ter</th>
+                                <th class="text-center px-2 py-3 font-semibold">Qua</th>
+                                <th class="text-center px-2 py-3 font-semibold">Qui</th>
+                                <th class="text-center px-2 py-3 font-semibold">Sex</th>
+                                <th class="text-center px-2 py-3 font-semibold">Sáb</th>
+                                <th class="text-center px-2 py-3 font-semibold">Dom</th>
+                            </tr>
+                        </thead>
+                        <tbody id="bodyDisponibilidade" class="divide-y divide-gray-100"></tbody>
+                    </table>
+                </div>
+                <div class="flex gap-5 mt-4 text-xs text-gray-500">
+                    <span><span class="inline-block w-3 h-3 rounded bg-green-400 mr-1"></span>Disponível</span>
+                    <span><span class="inline-block w-3 h-3 rounded bg-blue-400 mr-1"></span>Em Operação</span>
+                    <span><span class="inline-block w-3 h-3 rounded bg-amber-400 mr-1"></span>Manutenção</span>
+                    <span><span class="inline-block w-3 h-3 rounded bg-red-400 mr-1"></span>Inoperante</span>
+                </div>
+            </div>
+            <div class="grid grid-cols-1 sm:grid-cols-3 gap-5">
+                <div class="bg-white rounded-xl shadow-sm p-5 text-center">
+                    <p class="text-3xl font-bold text-green-600">14</p>
+                    <p class="text-xs text-gray-500 mt-1">Disponíveis Hoje</p>
+                </div>
+                <div class="bg-white rounded-xl shadow-sm p-5 text-center">
+                    <p class="text-3xl font-bold text-blue-600">4</p>
+                    <p class="text-xs text-gray-500 mt-1">Em Operação</p>
+                </div>
+                <div class="bg-white rounded-xl shadow-sm p-5 text-center">
+                    <p class="text-3xl font-bold text-amber-600">6</p>
+                    <p class="text-xs text-gray-500 mt-1">Indisponíveis</p>
+                </div>
+            </div>
+        </section>
+
+        <!-- ==================== OPERAÇÕES (P3) ==================== -->
+        <section id="page-operacoes" class="page-section hidden fade-in">
+            <div class="flex flex-wrap items-center justify-between gap-3 mb-5">
+                <h3 class="font-semibold text-navy-800"><i class="fas fa-bullseye text-navy-400 mr-2"></i>Operações Planejadas</h3>
+                <button class="bg-navy-700 text-white px-4 py-2 rounded-lg text-sm font-medium hover:bg-navy-600 transition" onclick="openModal('modalOperacao')">
+                    <i class="fas fa-plus mr-2"></i>Nova Operação
+                </button>
+            </div>
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-5" id="cardsOperacoes"></div>
+        </section>
+
+        <!-- ==================== SOLICITAÇÕES (Pelotões) ==================== -->
+        <section id="page-solicitacoes" class="page-section hidden fade-in">
+            <div class="flex flex-wrap items-center justify-between gap-3 mb-5">
+                <h3 class="font-semibold text-navy-800"><i class="fas fa-hand-paper text-navy-400 mr-2"></i>Solicitações de Viatura</h3>
+                <button class="bg-navy-700 text-white px-4 py-2 rounded-lg text-sm font-medium hover:bg-navy-600 transition" onclick="openModal('modalSolicitacao')">
+                    <i class="fas fa-plus mr-2"></i>Nova Solicitação
+                </button>
+            </div>
+            <div class="bg-white rounded-xl shadow-sm overflow-hidden">
+                <table class="w-full text-sm">
+                    <thead class="bg-navy-50 text-navy-700">
+                        <tr>
+                            <th class="text-left px-5 py-3 font-semibold">Nº</th>
+                            <th class="text-left px-5 py-3 font-semibold">Pelotão</th>
+                            <th class="text-left px-5 py-3 font-semibold">Finalidade</th>
+                            <th class="text-left px-5 py-3 font-semibold">Data Necessária</th>
+                            <th class="text-center px-5 py-3 font-semibold">Qtd Viaturas</th>
+                            <th class="text-center px-5 py-3 font-semibold">Status</th>
+                            <th class="text-center px-5 py-3 font-semibold">Ações</th>
+                        </tr>
+                    </thead>
+                    <tbody id="tabelaSolicitacoes" class="divide-y divide-gray-100"></tbody>
+                </table>
+            </div>
+        </section>
+
+        <!-- ==================== ALOCAÇÕES (Pelotões) ==================== -->
+        <section id="page-alocacoes" class="page-section hidden fade-in">
+            <h3 class="font-semibold text-navy-800 mb-5"><i class="fas fa-arrows-turn-to-dots text-navy-400 mr-2"></i>Alocações Atuais de Viaturas</h3>
+            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-5" id="cardsAlocacoes"></div>
+        </section>
+
+        <!-- ==================== RELATÓRIOS ==================== -->
+        <section id="page-relatorios" class="page-section hidden fade-in">
+            <div class="grid grid-cols-1 lg:grid-cols-2 gap-5 mb-6">
+                <div class="bg-white rounded-xl shadow-sm p-5">
+                    <h3 class="font-semibold text-navy-800 mb-4"><i class="fas fa-chart-line text-navy-400 mr-2"></i>Taxa de Operacionalidade (12 Meses)</h3>
+                    <canvas id="chartOperacionalidade" height="140"></canvas>
+                </div>
+                <div class="bg-white rounded-xl shadow-sm p-5">
+                    <h3 class="font-semibold text-navy-800 mb-4"><i class="fas fa-coins text-navy-400 mr-2"></i>Custos: Preventiva vs Corretiva</h3>
+                    <canvas id="chartPrevCorr" height="140"></canvas>
+                </div>
+            </div>
+            <div class="bg-white rounded-xl shadow-sm p-5 mb-5">
+                <h3 class="font-semibold text-navy-800 mb-4"><i class="fas fa-car-burst text-navy-400 mr-2"></i>Depreciação e Ciclo de Vida</h3>
+                <canvas id="chartDepreciacao" height="100"></canvas>
+            </div>
+            <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
+                <div class="bg-white rounded-xl shadow-sm p-5 text-center card-hover cursor-pointer" onclick="alert('Relatório PDF gerado!')">
+                    <i class="fas fa-file-pdf text-red-500 text-2xl mb-2"></i>
+                    <p class="text-sm font-medium text-navy-800">Relatório Mensal</p>
+                    <p class="text-xs text-gray-400">Exportar PDF</p>
+                </div>
+                <div class="bg-white rounded-xl shadow-sm p-5 text-center card-hover cursor-pointer" onclick="alert('Relatório PDF gerado!')">
+                    <i class="fas fa-file-excel text-green-500 text-2xl mb-2"></i>
+                    <p class="text-sm font-medium text-navy-800">Planilha de Custos</p>
+                    <p class="text-xs text-gray-400">Exportar Excel</p>
+                </div>
+                <div class="bg-white rounded-xl shadow-sm p-5 text-center card-hover cursor-pointer" onclick="alert('Relatório PDF gerado!')">
+                    <i class="fas fa-file-chart-line text-blue-500 text-2xl mb-2"></i>
+                    <p class="text-sm font-medium text-navy-800">Vida Útil</p>
+                    <p class="text-xs text-gray-400">Análise Detalhada</p>
+                </div>
+                <div class="bg-white rounded-xl shadow-sm p-5 text-center card-hover cursor-pointer" onclick="alert('Relatório PDF gerado!')">
+                    <i class="fas fa-file-contract text-purple-500 text-2xl mb-2"></i>
+                    <p class="text-sm font-medium text-navy-800">Consumo</p>
+                    <p class="text-xs text-gray-400">Combustível e Peças</p>
+                </div>
+            </div>
+        </section>
+
+    </div><!-- end pageContent -->
+</main>
+
+<!-- ==================== MODALS ==================== -->
+
+<!-- Modal Nova Viatura -->
+<div id="modalViatura" class="fixed inset-0 z-50 hidden items-center justify-center modal-overlay">
+    <div class="bg-white rounded-2xl shadow-2xl w-full max-w-lg mx-4 max-h-[90vh] overflow-y-auto">
+        <div class="flex items-center justify-between p-5 border-b">
+            <h3 class="font-bold text-navy-800"><i class="fas fa-truck mr-2"></i>Nova Viatura</h3>
+            <button onclick="closeModal('modalViatura')" class="text-gray-400 hover:text-gray-600"><i class="fas fa-times"></i></button>
+        </div>
+        <div class="p-5 space-y-4">
+            <div class="grid grid-cols-2 gap-4">
+                <div><label class="text-xs font-medium text-gray-600">Prefixo</label><input type="text" class="w-full border rounded-lg px-3 py-2 text-sm mt-1" placeholder="VTR-025"></div>
+                <div><label class="text-xs font-medium text-gray-600">Placa</label><input type="text" class="w-full border rounded-lg px-3 py-2 text-sm mt-1" placeholder="ABC-1D23"></div>
+            </div>
+            <div class="grid grid-cols-2 gap-4">
+                <div><label class="text-xs font-medium text-gray-600">Modelo</label><input type="text" class="w-full border rounded-lg px-3 py-2 text-sm mt-1" placeholder="Hilux SW4"></div>
+                <div><label class="text-xs font-medium text-gray-600">Ano</label><input type="number" class="w-full border rounded-lg px-3 py-2 text-sm mt-1" placeholder="2024"></div>
+            </div>
+            <div class="grid grid-cols-2 gap-4">
+                <div><label class="text-xs font-medium text-gray-600">Km Atual</label><input type="number" class="w-full border rounded-lg px-3 py-2 text-sm mt-1" placeholder="0"></div>
+                <div>
+                    <label class="text-xs font-medium text-gray-600">Tipo</label>
+                    <select class="w-full border rounded-lg px-3 py-2 text-sm mt-1">
+                        <option>Viatura Caracterizada</option>
+                        <option>Viatura Descaracterizada</option>
+                        <option>Viatura Administrativa</option>
+                        <option>Motocicleta</option>
+                    </select>
+                </div>
+            </div>
+            <div>
+                <label class="text-xs font-medium text-gray-600">Lotação</label>
+                <select class="w-full border rounded-lg px-3 py-2 text-sm mt-1">
+                    <option>1º Pelotão</option><option>2º Pelotão</option><option>3º Pelotão</option>
+                    <option>Reserva P4</option><option>Administrativo</option>
+                </select>
+            </div>
+        </div>
+        <div class="p-5 border-t flex justify-end gap-3">
+            <button onclick="closeModal('modalViatura')" class="px-4 py-2 text-sm text-gray-600 border rounded-lg hover:bg-gray-50">Cancelar</button>
+            <button onclick="closeModal('modalViatura')" class="px-4 py-2 text-sm bg-navy-700 text-white rounded-lg hover:bg-navy-600">Cadastrar</button>
+        </div>
+    </div>
+</div>
+
+<!-- Modal Nova Manutenção -->
+<div id="modalManutencao" class="fixed inset-0 z-50 hidden items-center justify-center modal-overlay">
+    <div class="bg-white rounded-2xl shadow-2xl w-full max-w-lg mx-4 max-h-[90vh] overflow-y-auto">
+        <div class="flex items-center justify-between p-5 border-b">
+            <h3 class="font-bold text-navy-800"><i class="fas fa-wrench mr-2"></i>Agendar Manutenção</h3>
+            <button onclick="closeModal('modalManutencao')" class="text-gray-400 hover:text-gray-600"><i class="fas fa-times"></i></button>
+        </div>
+        <div class="p-5 space-y-4">
+            <div>
+                <label class="text-xs font-medium text-gray-600">Viatura</label>
+                <select class="w-full border rounded-lg px-3 py-2 text-sm mt-1">
+                    <option>VTR-001 — Hilux SW4</option><option>VTR-002 — Ranger</option><option>VTR-003 — Duster</option>
+                </select>
+            </div>
+            <div class="grid grid-cols-2 gap-4">
+                <div>
+                    <label class="text-xs font-medium text-gray-600">Tipo</label>
+                    <select class="w-full border rounded-lg px-3 py-2 text-sm mt-1">
+                        <option>Preventiva</option><option>Corretiva</option>
+                    </select>
+                </div>
+                <div><label class="text-xs font-medium text-gray-600">Data Prevista</label><input type="date" class="w-full border rounded-lg px-3 py-2 text-sm mt-1"></div>
+            </div>
+            <div><label class="text-xs font-medium text-gray-600">Descrição do Serviço</label><textarea class="w-full border rounded-lg px-3 py-2 text-sm mt-1" rows="3" placeholder="Descreva o serviço..."></textarea></div>
+            <div><label class="text-xs font-medium text-gray-600">Custo Estimado (R$)</label><input type="number" class="w-full border rounded-lg px-3 py-2 text-sm mt-1" placeholder="0,00"></div>
+        </div>
+        <div class="p-5 border-t flex justify-end gap-3">
+            <button onclick="closeModal('modalManutencao')" class="px-4 py-2 text-sm text-gray-600 border rounded-lg hover:bg-gray-50">Cancelar</button>
+            <button onclick="closeModal('modalManutencao')" class="px-4 py-2 text-sm bg-navy-700 text-white rounded-lg hover:bg-navy-600">Agendar</button>
+        </div>
+    </div>
+</div>
+
+<!-- Modal Nova Operação -->
+<div id="modalOperacao" class="fixed inset-0 z-50 hidden items-center justify-center modal-overlay">
+    <div class="bg-white rounded-2xl shadow-2xl w-full max-w-lg mx-4 max-h-[90vh] overflow-y-auto">
+        <div class="flex items-center justify-between p-5 border-b">
+            <h3 class="font-bold text-navy-800"><i class="fas fa-bullseye mr-2"></i>Nova Operação</h3>
+            <button onclick="closeModal('modalOperacao')" class="text-gray-400 hover:text-gray-600"><i class="fas fa-times"></i></button>
+        </div>
+        <div class="p-5 space-y-4">
+            <div><label class="text-xs font-medium text-gray-600">Nome da Operação</label><input type="text" class="w-full border rounded-lg px-3 py-2 text-sm mt-1" placeholder="Ex: Operação Sentinela"></div>
+            <div class="grid grid-cols-2 gap-4">
+                <div><label class="text-xs font-medium text-gray-600">Data Início</label><input type="date" class="w-full border rounded-lg px-3 py-2 text-sm mt-1"></div>
+                <div><label class="text-xs font-medium text-gray-600">Data Fim</label><input type="date" class="w-full border rounded-lg px-3 py-2 text-sm mt-1"></div>
+            </div>
+            <div><label class="text-xs font-medium text-gray-600">Viaturas Necessárias</label><input type="number" class="w-full border rounded-lg px-3 py-2 text-sm mt-1" placeholder="3"></div>
+            <div><label class="text-xs font-medium text-gray-600">Descrição</label><textarea class="w-full border rounded-lg px-3 py-2 text-sm mt-1" rows="3" placeholder="Detalhes da operação..."></textarea></div>
+        </div>
+        <div class="p-5 border-t flex justify-end gap-3">
+            <button onclick="closeModal('modalOperacao')" class="px-4 py-2 text-sm text-gray-600 border rounded-lg hover:bg-gray-50">Cancelar</button>
+            <button onclick="closeModal('modalOperacao')" class="px-4 py-2 text-sm bg-navy-700 text-white rounded-lg hover:bg-navy-600">Planejar</button>
+        </div>
+    </div>
+</div>
+
+<!-- Modal Nova Solicitação -->
+<div id="modalSolicitacao" class="fixed inset-0 z-50 hidden items-center justify-center modal-overlay">
+    <div class="bg-white rounded-2xl shadow-2xl w-full max-w-lg mx-4 max-h-[90vh] overflow-y-auto">
+        <div class="flex items-center justify-between p-5 border-b">
+            <h3 class="font-bold text-navy-800"><i class="fas fa-hand-paper mr-2"></i>Nova Solicitação</h3>
+            <button onclick="closeModal('modalSolicitacao')" class="text-gray-400 hover:text-gray-600"><i class="fas fa-times"></i></button>
+        </div>
+        <div class="p-5 space-y-4">
+            <div>
+                <label class="text-xs font-medium text-gray-600">Pelotão Solicitante</label>
+                <select class="w-full border rounded-lg px-3 py-2 text-sm mt-1">
+                    <option>1º Pelotão</option><option>2º Pelotão</option><option>3º Pelotão</option>
+                </select>
+            </div>
+            <div><label class="text-xs font-medium text-gray-600">Finalidade</label><input type="text" class="w-full border rounded-lg px-3 py-2 text-sm mt-1" placeholder="Ex: Patrulhamento Setor Norte"></div>
+            <div class="grid grid-cols-2 gap-4">
+                <div><label class="text-xs font-medium text-gray-600">Data Necessária</label><input type="date" class="w-full border rounded-lg px-3 py-2 text-sm mt-1"></div>
+                <div><label class="text-xs font-medium text-gray-600">Qtd Viaturas</label><input type="number" class="w-full border rounded-lg px-3 py-2 text-sm mt-1" placeholder="1"></div>
+            </div>
+            <div><label class="text-xs font-medium text-gray-600">Observações</label><textarea class="w-full border rounded-lg px-3 py-2 text-sm mt-1" rows="2" placeholder="Informações adicionais..."></textarea></div>
+        </div>
+        <div class="p-5 border-t flex justify-end gap-3">
+            <button onclick="closeModal('modalSolicitacao')" class="px-4 py-2 text-sm text-gray-600 border rounded-lg hover:bg-gray-50">Cancelar</button>
+            <button onclick="closeModal('modalSolicitacao')" class="px-4 py-2 text-sm bg-navy-700 text-white rounded-lg hover:bg-navy-600">Solicitar</button>
+        </div>
+    </div>
+</div>
+
+<!-- ==================== JAVASCRIPT ==================== -->
+<script>
+// ========== MOCK DATA ==========
+const viaturas = [
+    { prefixo:'VTR-001', modelo:'Hilux SW4', placa:'QRA-1A23', ano:2023, km:45230, status:'Operacional', condicao:85, lotacao:'1º Pelotão', tipo:'Caracterizada' },
+    { prefixo:'VTR-002', modelo:'Ranger XLS', placa:'QRB-2B34', ano:2022, km:62100, status:'Operacional', condicao:72, lotacao:'1º Pelotão', tipo:'Caracterizada' },
+    { prefixo:'VTR-003', modelo:'Duster', placa:'QRC-3C45', ano:2021, km:78500, status:'Em Manutenção', condicao:55, lotacao:'2º Pelotão', tipo:'Caracterizada' },
+    { prefixo:'VTR-004', modelo:'Trailblazer', placa:'QRD-4D56', ano:2023, km:32000, status:'Operacional', condicao:90, lotacao:'2º Pelotão', tipo:'Descaracterizada' },
+    { prefixo:'VTR-005', modelo:'S10', placa:'QRE-5E67', ano:2020, km:98700, status:'Inoperante', condicao:30, lotacao:'Reserva P4', tipo:'Caracterizada' },
+    { prefixo:'VTR-006', modelo:'Hilux', placa:'QRF-6F78', ano:2024, km:12300, status:'Operacional', condicao:95, lotacao:'3º Pelotão', tipo:'Caracterizada' },
+    { prefixo:'VTR-007', modelo:'Frontier', placa:'QRG-7G89', ano:2022, km:55400, status:'Operacional', condicao:68, lotacao:'1º Pelotão', tipo:'Caracterizada' },
+    { prefixo:'VTR-008', modelo:'Amarok', placa:'QRH-8H90', ano:2021, km:71200, status:'Em Manutenção', condicao:50, lotacao:'2º Pelotão', tipo:'Caracterizada' },
+    { prefixo:'VTR-009', modelo:'Corolla', placa:'QRI-9I01', ano:2023, km:28500, status:'Operacional', condicao:88, lotacao:'Administrativo', tipo:'Administrativa' },
+    { prefixo:'VTR-010', modelo:'Civic', placa:'QRJ-0J12', ano:2022, km:41000, status:'Operacional', condicao:76, lotacao:'3º Pelotão', tipo:'Descaracterizada' },
+    { prefixo:'VTR-011', modelo:'Hilux CD', placa:'QRK-1K23', ano:2024, km:8900, status:'Operacional', condicao:97, lotacao:'1º Pelotão', tipo:'Caracterizada' },
+    { prefixo:'VTR-012', modelo:'Pajero Sport', placa:'QRL-2L34', ano:2020, km:105000, status:'Inoperante', condicao:22, lotacao:'Reserva P4', tipo:'Caracterizada' },
+    { prefixo:'VTR-013', modelo:'Honda CG 160', placa:'QRM-3M45', ano:2023, km:15800, status:'Operacional', condicao:92, lotacao:'1º Pelotão', tipo:'Motocicleta' },
+    { prefixo:'VTR-014', modelo:'BMW G310', placa:'QRN-4N56', ano:2024, km:5200, status:'Operacional', condicao:98, lotacao:'2º Pelotão', tipo:'Motocicleta' },
+    { prefixo:'VTR-015', modelo:'Ranger Limited', placa:'QRO-5O67', ano:2022, km:58300, status:'Operacional', condicao:70, lotacao:'3º Pelotão', tipo:'Caracterizada' },
+    { prefixo:'VTR-016', modelo:'Hilux SR', placa:'QRP-6P78', ano:2021, km:82000, status:'Em Manutenção', condicao:48, lotacao:'1º Pelotão', tipo:'Caracterizada' },
+    { prefixo:'VTR-017', modelo:'Duster Oroch', placa:'QRQ-7Q89', ano:2023, km:22000, status:'Operacional', condicao:86, lotacao:'2º Pelotão', tipo:'Caracterizada' },
+    { prefixo:'VTR-018', modelo:'Spin', placa:'QRR-8R90', ano:2022, km:47500, status:'Operacional', condicao:74, lotacao:'Administrativo', tipo:'Administrativa' },
+    { prefixo:'VTR-019', modelo:'S10 High Country', placa:'QRS-9S01', ano:2024, km:9800, status:'Operacional', condicao:96, lotacao:'3º Pelotão', tipo:'Caracterizada' },
+    { prefixo:'VTR-020', modelo:'Tracker', placa:'QRT-0T12', ano:2023, km:31000, status:'Operacional', condicao:82, lotacao:'1º Pelotão', tipo:'Descaracterizada' },
+    { prefixo:'VTR-021', modelo:'Toro', placa:'QRU-1U23', ano:2022, km:63500, status:'Em Manutenção', condicao:52, lotacao:'2º Pelotão', tipo:'Caracterizada' },
+    { prefixo:'VTR-022', modelo:'Honda XRE 300', placa:'QRV-2V34', ano:2024, km:4300, status:'Operacional', condicao:99, lotacao:'3º Pelotão', tipo:'Motocicleta' },
+    { prefixo:'VTR-023', modelo:'Compass', placa:'QRW-3W45', ano:2023, km:27000, status:'Operacional', condicao:84, lotacao:'Administrativo', tipo:'Administrativa' },
+    { prefixo:'VTR-024', modelo:'Hilux SRX', placa:'QRX-4X56', ano:2021, km:89000, status:'Operacional', condicao:60, lotacao:'1º Pelotão', tipo:'Caracterizada' },
+];
+
+const manutencoes = [
+    { id:1, viatura:'VTR-003', tipo:'Corretiva', desc:'Substituição de embreagem', data:'2026-06-20', custo:3200, status:'Agendada' },
+    { id:2, viatura:'VTR-008', tipo:'Preventiva', desc:'Revisão 70.000km — filtros, óleo, correias', data:'2026-06-18', custo:1800, status:'Em Andamento' },
+    { id:3, viatura:'VTR-016', tipo:'Corretiva', desc:'Reparo no sistema de arrefecimento', data:'2026-06-22', custo:2500, status:'Agendada' },
+    { id:4, viatura:'VTR-021', tipo:'Preventiva', desc:'Troca de pastilhas e discos de freio', data:'2026-06-19', custo:1400, status:'Em Andamento' },
+    { id:5, viatura:'VTR-007', tipo:'Preventiva', desc:'Revisão 55.000km', data:'2026-06-25', custo:1200, status:'Agendada' },
+    { id:6, viatura:'VTR-024', tipo:'Preventiva', desc:'Alinhamento e balanceamento', data:'2026-06-28', custo:350, status:'Agendada' },
+];
+
+const historicoManutencao = [
+    { data:'2026-05-15', viatura:'VTR-001', tipo:'Preventiva', desc:'Revisão 45.000km', custo:1500, status:'Concluída' },
+    { data:'2026-05-10', viatura:'VTR-005', tipo:'Corretiva', desc:'Problema na caixa de câmbio', custo:8500, status:'Concluída' },
+    { data:'2026-04-28', viatura:'VTR-012', tipo:'Corretiva', desc:'Motor fundido — aguardando peças', custo:15000, status:'Pendente' },
+    { data:'2026-04-20', viatura:'VTR-002', tipo:'Preventiva', desc:'Troca de pneus (4 unidades)', custo:3200, status:'Concluída' },
+    { data:'2026-04-10', viatura:'VTR-009', tipo:'Preventiva', desc:'Revisão 25.000km', custo:900, status:'Concluída' },
+    { data:'2026-03-22', viatura:'VTR-015', tipo:'Corretiva', desc:'Reparo suspensão dianteira', custo:4200, status:'Concluída' },
+    { data:'2026-03-05', viatura:'VTR-006', tipo:'Preventiva', desc:'Primeira revisão 10.000km', custo:650, status:'Concluída' },
+    { data:'2026-02-18', viatura:'VTR-010', tipo:'Preventiva', desc:'Troca de óleo e filtros', custo:450, status:'Concluída' },
+];
+
+const operacoes = [
+    { nome:'Op. Sentinela', inicio:'2026-06-15', fim:'2026-06-22', viaturas:['VTR-001','VTR-002','VTR-007'], pelotao:'1º Pelotão', status:'Em Andamento', desc:'Reforço de patrulhamento noturno no Setor Norte' },
+    { nome:'Op. Guardiões', inicio:'2026-06-18', fim:'2026-06-18', viaturas:['VTR-004'], pelotao:'2º Pelotão', status:'Em Andamento', desc:'Escolta e segurança de evento público' },
+    { nome:'Op. Cerco Total', inicio:'2026-06-20', fim:'2026-06-25', viaturas:['VTR-006','VTR-019','VTR-015','VTR-010'], pelotao:'3º Pelotão', status:'Planejada', desc:'Operação de saturação na região central' },
+    { nome:'Op. Vigia', inicio:'2026-06-25', fim:'2026-06-30', viaturas:['VTR-011','VTR-020'], pelotao:'1º Pelotão', status:'Planejada', desc:'Monitoramento de pontos críticos' },
+];
+
+const solicitacoes = [
+    { id:'SOL-001', pelotao:'1º Pelotão', finalidade:'Patrulhamento reforçado — Setor Leste', data:'2026-06-20', qtd:2, status:'Aprovada' },
+    { id:'SOL-002', pelotao:'3º Pelotão', finalidade:'Transporte de equipe para operação', data:'2026-06-22', qtd:3, status:'Pendente' },
+    { id:'SOL-003', pelotao:'2º Pelotão', finalidade:'Apoio a blitz educativa', data:'2026-06-19', qtd:1, status:'Aprovada' },
+    { id:'SOL-004', pelotao:'1º Pelotão', finalidade:'Escolta de preso', data:'2026-06-21', qtd:2, status:'Pendente' },
+    { id:'SOL-005', pelotao:'3º Pelotão', finalidade:'Policiamento evento esportivo', data:'2026-06-24', qtd:4, status:'Negada' },
+];
+
+const alocacoes = [
+    { pelotao:'1º Pelotão', viaturas:['VTR-001','VTR-002','VTR-007','VTR-011','VTR-013','VTR-020','VTR-024'], responsavel:'Ten Oliveira' },
+    { pelotao:'2º Pelotão', viaturas:['VTR-004','VTR-014','VTR-017'], responsavel:'Ten Santos' },
+    { pelotao:'3º Pelotão', viaturas:['VTR-006','VTR-010','VTR-015','VTR-019','VTR-022'], responsavel:'Ten Almeida' },
+    { pelotao:'Administrativo', viaturas:['VTR-009','VTR-018','VTR-023'], responsavel:'Sgt Ferreira' },
+];
+
+// ========== NAVIGATION ==========
+function navigateTo(page) {
+    document.querySelectorAll('.page-section').forEach(s => s.classList.add('hidden'));
+    document.querySelectorAll('.sidebar-link').forEach(l => l.classList.remove('active'));
+    const target = document.getElementById('page-' + page);
+    if (target) { target.classList.remove('hidden'); }
+    const link = document.querySelector(`[data-page="${page}"]`);
+    if (link) link.classList.add('active');
+    const titles = {
+        dashboard: ['Painel Geral', 'Visão geral da frota e operações'],
+        frota: ['Frota de Viaturas', 'P4 — Cadastro e gestão da frota'],
+        manutencao: ['Manutenção', 'P4 — Controle de manutenções preventivas e corretivas'],
+        combustivel: ['Combustível', 'P4 — Monitoramento de consumo e abastecimento'],
+        desgaste: ['Desgaste e Vida Útil', 'P4 — Monitoramento de componentes e depreciação'],
+        disponibilidade: ['Disponibilidade', 'P3 — Viaturas disponíveis para planejamento'],
+        operacoes: ['Operações', 'P3 — Planejamento e alocação de viaturas em operações'],
+        solicitacoes: ['Solicitações', 'Pelotões — Solicitações de viatura'],
+        alocacoes: ['Alocações Atuais', 'Pelotões — Distribuição atual da frota'],
+        relatorios: ['Relatórios', 'Análises e exportações gerenciais'],
+    };
+    if (titles[page]) {
+        document.getElementById('pageTitle').textContent = titles[page][0];
+        document.getElementById('pageSubtitle').textContent = titles[page][1];
+    }
+    if (page === 'manutencao') renderManutencao();
+    if (page === 'combustivel') renderCombustivel();
+    if (page === 'desgaste') renderDesgaste();
+    if (page === 'disponibilidade') renderDisponibilidade();
+    if (page === 'operacoes') renderOperacoes();
+    if (page === 'solicitacoes') renderSolicitacoes();
+    if (page === 'alocacoes') renderAlocacoes();
+    if (page === 'relatorios') renderRelatorios();
+    if (window.innerWidth < 1024) closeSidebarMobile();
+}
+
+function toggleSidebar() {
+    document.getElementById('sidebar').classList.toggle('-translate-x-full');
+}
+function closeSidebarMobile() {
+    document.getElementById('sidebar').classList.add('-translate-x-full');
+}
+
+// ========== MODAL ==========
+function openModal(id) {
+    const m = document.getElementById(id);
+    m.classList.remove('hidden');
+    m.classList.add('flex');
+}
+function closeModal(id) {
+    const m = document.getElementById(id);
+    m.classList.add('hidden');
+    m.classList.remove('flex');
+}
+
+// ========== TAB SWITCH ==========
+function switchTab(btn, tabId) {
+    document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
+    document.querySelectorAll('.tab-content').forEach(t => t.classList.add('hidden'));
+    btn.classList.add('active');
+    document.getElementById(tabId).classList.remove('hidden');
+    if (tabId === 'tabCustos') renderChartCustosViatura();
+}
+
+// ========== RENDER FUNCTIONS ==========
+
+function statusBadge(status) {
+    const colors = { 'Operacional':'bg-green-100 text-green-700', 'Em Manutenção':'bg-amber-100 text-amber-700', 'Inoperante':'bg-red-100 text-red-700' };
+    return `<span class="px-2.5 py-1 rounded-full text-xs font-medium ${colors[status] || 'bg-gray-100 text-gray-600'}">${status}</span>`;
+}
+
+function condicaoBar(value) {
+    let color = value >= 75 ? 'bg-green-500' : value >= 50 ? 'bg-yellow-500' : value >= 25 ? 'bg-orange-500' : 'bg-red-500';
+    return `<div class="flex items-center gap-2"><div class="w-16 h-2 bg-gray-200 rounded-full overflow-hidden"><div class="h-full ${color} rounded-full" style="width:${value}%"></div></div><span class="text-xs font-medium">${value}%</span></div>`;
+}
+
+function renderFrota() {
+    const tbody = document.getElementById('tabelaFrota');
+    tbody.innerHTML = viaturas.map(v => `
+        <tr class="hover:bg-gray-50 transition">
+            <td class="px-5 py-3 font-semibold text-navy-800">${v.prefixo}</td>
+            <td class="px-5 py-3 text-gray-600">${v.modelo}</td>
+            <td class="px-5 py-3 text-gray-500 font-mono text-xs">${v.placa}</td>
+            <td class="px-5 py-3 text-gray-500">${v.ano}</td>
+            <td class="px-5 py-3 text-right text-gray-600">${v.km.toLocaleString('pt-BR')} km</td>
+            <td class="px-5 py-3 text-center">${statusBadge(v.status)}</td>
+            <td class="px-5 py-3 text-center">${condicaoBar(v.condicao)}</td>
+            <td class="px-5 py-3 text-center text-xs text-gray-500">${v.lotacao}</td>
+            <td class="px-5 py-3 text-center">
+                <button class="text-navy-400 hover:text-navy-700 mx-1" title="Editar"><i class="fas fa-pen text-xs"></i></button>
+                <button class="text-blue-400 hover:text-blue-700 mx-1" title="Detalhes"><i class="fas fa-eye text-xs"></i></button>
+            </td>
+        </tr>
+    `).join('');
+}
+
+function filterFrota() {
+    const search = document.getElementById('searchFrota').value.toLowerCase();
+    const status = document.getElementById('filterStatus').value;
+    const filtered = viaturas.filter(v => {
+        const matchSearch = v.prefixo.toLowerCase().includes(search) || v.modelo.toLowerCase().includes(search) || v.placa.toLowerCase().includes(search);
+        const matchStatus = !status || v.status === status;
+        return matchSearch && matchStatus;
+    });
+    const tbody = document.getElementById('tabelaFrota');
+    tbody.innerHTML = filtered.map(v => `
+        <tr class="hover:bg-gray-50 transition">
+            <td class="px-5 py-3 font-semibold text-navy-800">${v.prefixo}</td>
+            <td class="px-5 py-3 text-gray-600">${v.modelo}</td>
+            <td class="px-5 py-3 text-gray-500 font-mono text-xs">${v.placa}</td>
+            <td class="px-5 py-3 text-gray-500">${v.ano}</td>
+            <td class="px-5 py-3 text-right text-gray-600">${v.km.toLocaleString('pt-BR')} km</td>
+            <td class="px-5 py-3 text-center">${statusBadge(v.status)}</td>
+            <td class="px-5 py-3 text-center">${condicaoBar(v.condicao)}</td>
+            <td class="px-5 py-3 text-center text-xs text-gray-500">${v.lotacao}</td>
+            <td class="px-5 py-3 text-center">
+                <button class="text-navy-400 hover:text-navy-700 mx-1"><i class="fas fa-pen text-xs"></i></button>
+                <button class="text-blue-400 hover:text-blue-700 mx-1"><i class="fas fa-eye text-xs"></i></button>
+            </td>
+        </tr>
+    `).join('');
+}
+
+function renderManutencao() {
+    document.getElementById('cardsManutencao').innerHTML = manutencoes.map(m => {
+        const statusColor = m.status === 'Em Andamento' ? 'border-blue-500' : 'border-amber-500';
+        const statusBg = m.status === 'Em Andamento' ? 'bg-blue-100 text-blue-700' : 'bg-amber-100 text-amber-700';
+        return `<div class="bg-white rounded-xl shadow-sm p-5 border-l-4 ${statusColor} card-hover">
+            <div class="flex justify-between items-start mb-3">
+                <h4 class="font-semibold text-navy-800">${m.viatura}</h4>
+                <span class="px-2 py-0.5 rounded-full text-xs font-medium ${statusBg}">${m.status}</span>
+            </div>
+            <p class="text-sm text-gray-600 mb-2">${m.desc}</p>
+            <div class="flex justify-between text-xs text-gray-500">
+                <span><i class="fas fa-tag mr-1"></i>${m.tipo}</span>
+                <span><i class="far fa-calendar mr-1"></i>${formatDate(m.data)}</span>
+            </div>
+            <div class="mt-3 pt-3 border-t text-right">
+                <span class="text-sm font-bold text-navy-800">R$ ${m.custo.toLocaleString('pt-BR',{minimumFractionDigits:2})}</span>
+            </div>
+        </div>`;
+    }).join('');
+
+    document.getElementById('tabelaHistorico').innerHTML = historicoManutencao.map(h => {
+        const stColor = h.status === 'Concluída' ? 'bg-green-100 text-green-700' : 'bg-amber-100 text-amber-700';
+        return `<tr class="hover:bg-gray-50"><td class="px-5 py-3 text-gray-500">${formatDate(h.data)}</td><td class="px-5 py-3 font-medium text-navy-800">${h.viatura}</td><td class="px-5 py-3"><span class="px-2 py-0.5 rounded text-xs font-medium ${h.tipo==='Preventiva'?'bg-green-50 text-green-600':'bg-red-50 text-red-600'}">${h.tipo}</span></td><td class="px-5 py-3 text-gray-600">${h.desc}</td><td class="px-5 py-3 text-right font-medium">R$ ${h.custo.toLocaleString('pt-BR',{minimumFractionDigits:2})}</td><td class="px-5 py-3 text-center"><span class="px-2 py-0.5 rounded-full text-xs font-medium ${stColor}">${h.status}</span></td></tr>`;
+    }).join('');
+}
+
+let chartCustosViaturaInstance = null;
+function renderChartCustosViatura() {
+    if (chartCustosViaturaInstance) chartCustosViaturaInstance.destroy();
+    const ctx = document.getElementById('chartCustosViatura').getContext('2d');
+    const labels = ['VTR-005','VTR-012','VTR-015','VTR-003','VTR-002','VTR-008','VTR-001','VTR-016','VTR-009','VTR-006'];
+    const data = [8500,15000,4200,3200,3200,1800,1500,2500,900,650];
+    chartCustosViaturaInstance = new Chart(ctx, {
+        type:'bar', data:{ labels, datasets:[{ label:'Custo (R$)', data, backgroundColor:'#4164af', borderRadius:6 }] },
+        options:{ responsive:true, plugins:{ legend:{ display:false } }, scales:{ y:{ beginAtZero:true, ticks:{ callback:v=>'R$ '+v.toLocaleString('pt-BR') } } } }
+    });
+}
+
+function renderCombustivel() {
+    const ctx = document.getElementById('chartConsumo');
+    if (ctx._chart) ctx._chart.destroy();
+    const labels = ['VTR-001','VTR-002','VTR-004','VTR-006','VTR-007','VTR-009','VTR-010','VTR-011','VTR-013','VTR-015'];
+    const data = [280,310,250,180,295,150,220,120,90,270];
+    ctx._chart = new Chart(ctx.getContext('2d'), {
+        type:'bar', data:{ labels, datasets:[{ label:'Litros', data, backgroundColor:'#d4af37', borderRadius:6 }] },
+        options:{ responsive:true, plugins:{ legend:{ display:false } }, scales:{ y:{ beginAtZero:true } } }
+    });
+    document.getElementById('listaAbastecimentos').innerHTML = [
+        { vtr:'VTR-001', litros:52, data:'17/06/2026', km:45230 },
+        { vtr:'VTR-007', litros:48, data:'17/06/2026', km:55400 },
+        { vtr:'VTR-006', litros:40, data:'16/06/2026', km:12300 },
+        { vtr:'VTR-002', litros:55, data:'16/06/2026', km:62100 },
+        { vtr:'VTR-011', litros:35, data:'15/06/2026', km:8900 },
+        { vtr:'VTR-009', litros:42, data:'15/06/2026', km:28500 },
+    ].map(a => `<div class="flex items-center justify-between p-3 bg-gray-50 rounded-lg"><div><span class="font-semibold text-navy-800 text-sm">${a.vtr}</span><span class="text-xs text-gray-400 ml-2">${a.km.toLocaleString('pt-BR')} km</span></div><div class="text-right"><span class="text-sm font-medium text-amber-600">${a.litros} L</span><span class="text-xs text-gray-400 ml-2">${a.data}</span></div></div>`).join('');
+}
+
+function renderDesgaste() {
+    const componentes = ['Motor','Transmissão','Freios','Suspensão','Pneus','Elétrica'];
+    document.getElementById('cardsDesgaste').innerHTML = viaturas.filter(v => v.condicao < 75).map(v => {
+        const compValues = componentes.map(() => Math.max(10, v.condicao + Math.floor(Math.random()*30 - 15)));
+        return `<div class="bg-white rounded-xl shadow-sm p-5 card-hover">
+            <div class="flex justify-between items-center mb-4">
+                <div><h4 class="font-semibold text-navy-800">${v.prefixo} — ${v.modelo}</h4><p class="text-xs text-gray-400">${v.km.toLocaleString('pt-BR')} km | ${v.ano}</p></div>
+                <div class="text-center"><p class="text-2xl font-bold ${v.condicao>=50?'text-amber-500':'text-red-500'}">${v.condicao}%</p><p class="text-[10px] text-gray-400">Saúde</p></div>
+            </div>
+            <div class="space-y-2">${componentes.map((c,i) => {
+                const val = compValues[i];
+                const clr = val >= 70 ? 'bg-green-500' : val >= 40 ? 'bg-yellow-500' : 'bg-red-500';
+                return `<div class="flex items-center gap-3"><span class="text-xs text-gray-500 w-24">${c}</span><div class="flex-1 h-2 bg-gray-200 rounded-full overflow-hidden"><div class="h-full ${clr} rounded-full" style="width:${val}%"></div></div><span class="text-xs font-medium w-8 text-right">${val}%</span></div>`;
+            }).join('')}</div>
+            ${v.condicao < 40 ? '<div class="mt-3 p-2 bg-red-50 rounded-lg text-xs text-red-600 font-medium"><i class="fas fa-exclamation-triangle mr-1"></i>Atenção: Recomendado recolher para manutenção imediata</div>' : ''}
+        </div>`;
+    }).join('');
+}
+
+function renderDisponibilidade() {
+    const statusColors = { d:'bg-green-400', o:'bg-blue-400', m:'bg-amber-400', i:'bg-red-400' };
+    const grid = viaturas.slice(0,15).map(v => {
+        const days = Array(7).fill('d');
+        if (v.status === 'Em Manutenção') { days[0]='m'; days[1]='m'; days[2]='m'; days[3]='d'; }
+        if (v.status === 'Inoperante') days.fill('i');
+        const inOp = operacoes.find(op => op.viaturas.includes(v.prefixo) && op.status === 'Em Andamento');
+        if (inOp) { days[0]='o'; days[1]='o'; days[2]='o'; }
+        return { prefixo: v.prefixo, modelo: v.modelo, days };
+    });
+    document.getElementById('bodyDisponibilidade').innerHTML = grid.map(g =>
+        `<tr class="hover:bg-gray-50"><td class="px-4 py-2"><span class="font-semibold text-navy-800 text-sm">${g.prefixo}</span> <span class="text-xs text-gray-400">${g.modelo}</span></td>${g.days.map(d => `<td class="px-2 py-2 text-center"><div class="w-6 h-6 ${statusColors[d]} rounded mx-auto"></div></td>`).join('')}</tr>`
+    ).join('');
+}
+
+function renderOperacoes() {
+    document.getElementById('cardsOperacoes').innerHTML = operacoes.map(op => {
+        const stColor = op.status === 'Em Andamento' ? 'bg-green-100 text-green-700 border-green-500' : 'bg-blue-100 text-blue-700 border-blue-500';
+        const borderColor = op.status === 'Em Andamento' ? 'border-green-500' : 'border-blue-500';
+        return `<div class="bg-white rounded-xl shadow-sm p-5 border-l-4 ${borderColor} card-hover">
+            <div class="flex justify-between items-start mb-3">
+                <h4 class="font-bold text-navy-800">${op.nome}</h4>
+                <span class="px-2 py-0.5 rounded-full text-xs font-medium ${stColor}">${op.status}</span>
+            </div>
+            <p class="text-sm text-gray-600 mb-3">${op.desc}</p>
+            <div class="grid grid-cols-2 gap-2 text-xs text-gray-500 mb-3">
+                <span><i class="fas fa-users mr-1"></i>${op.pelotao}</span>
+                <span><i class="far fa-calendar mr-1"></i>${formatDate(op.inicio)} a ${formatDate(op.fim)}</span>
+            </div>
+            <div class="flex flex-wrap gap-1">${op.viaturas.map(v => `<span class="px-2 py-0.5 bg-navy-50 text-navy-700 rounded text-xs font-medium">${v}</span>`).join('')}</div>
+        </div>`;
+    }).join('');
+}
+
+function renderSolicitacoes() {
+    const stColors = { 'Aprovada':'bg-green-100 text-green-700', 'Pendente':'bg-amber-100 text-amber-700', 'Negada':'bg-red-100 text-red-700' };
+    document.getElementById('tabelaSolicitacoes').innerHTML = solicitacoes.map(s =>
+        `<tr class="hover:bg-gray-50"><td class="px-5 py-3 font-semibold text-navy-800">${s.id}</td><td class="px-5 py-3">${s.pelotao}</td><td class="px-5 py-3 text-gray-600">${s.finalidade}</td><td class="px-5 py-3 text-gray-500">${formatDate(s.data)}</td><td class="px-5 py-3 text-center font-medium">${s.qtd}</td><td class="px-5 py-3 text-center"><span class="px-2.5 py-1 rounded-full text-xs font-medium ${stColors[s.status]}">${s.status}</span></td><td class="px-5 py-3 text-center">${s.status==='Pendente'?'<button class="text-green-500 hover:text-green-700 mx-1" title="Aprovar"><i class="fas fa-check"></i></button><button class="text-red-400 hover:text-red-600 mx-1" title="Negar"><i class="fas fa-times"></i></button>':'<span class="text-xs text-gray-400">—</span>'}</td></tr>`
+    ).join('');
+}
+
+function renderAlocacoes() {
+    const colors = ['border-blue-500','border-green-500','border-purple-500','border-amber-500'];
+    document.getElementById('cardsAlocacoes').innerHTML = alocacoes.map((a,i) =>
+        `<div class="bg-white rounded-xl shadow-sm p-5 border-l-4 ${colors[i%4]} card-hover">
+            <div class="flex justify-between items-center mb-4">
+                <h4 class="font-bold text-navy-800">${a.pelotao}</h4>
+                <span class="text-xs text-gray-400"><i class="fas fa-user-shield mr-1"></i>${a.responsavel}</span>
+            </div>
+            <p class="text-xs text-gray-500 mb-3">${a.viaturas.length} viatura(s) alocada(s)</p>
+            <div class="flex flex-wrap gap-1.5">${a.viaturas.map(v => {
+                const vtr = viaturas.find(x => x.prefixo === v);
+                const stDot = vtr ? (vtr.status === 'Operacional' ? 'bg-green-400' : vtr.status === 'Em Manutenção' ? 'bg-amber-400' : 'bg-red-400') : 'bg-gray-400';
+                return `<span class="flex items-center gap-1 px-2 py-1 bg-gray-50 rounded text-xs"><span class="w-2 h-2 rounded-full ${stDot}"></span>${v}</span>`;
+            }).join('')}</div>
+        </div>`
+    ).join('');
+}
+
+let chartOp=null, chartPC=null, chartDep=null;
+function renderRelatorios() {
+    const months = ['Jul','Ago','Set','Out','Nov','Dez','Jan','Fev','Mar','Abr','Mai','Jun'];
+    if(chartOp) chartOp.destroy();
+    chartOp = new Chart(document.getElementById('chartOperacionalidade').getContext('2d'), {
+        type:'line', data:{ labels:months, datasets:[{ label:'Operacionalidade %', data:[78,75,80,82,79,76,74,77,80,75,73,75], borderColor:'#4164af', backgroundColor:'rgba(65,100,175,0.1)', fill:true, tension:0.4 }] },
+        options:{ responsive:true, scales:{ y:{ min:60, max:100, ticks:{ callback:v=>v+'%' } } }, plugins:{ legend:{ display:false } } }
+    });
+    if(chartPC) chartPC.destroy();
+    chartPC = new Chart(document.getElementById('chartPrevCorr').getContext('2d'), {
+        type:'bar', data:{ labels:months, datasets:[
+            { label:'Preventiva', data:[1200,800,1500,900,1100,650,1800,1400,950,3200,900,350], backgroundColor:'#22c55e', borderRadius:4 },
+            { label:'Corretiva', data:[0,3500,0,4200,0,8500,0,0,15000,0,2500,3200], backgroundColor:'#ef4444', borderRadius:4 }
+        ] }, options:{ responsive:true, scales:{ y:{ beginAtZero:true, ticks:{ callback:v=>'R$'+v/1000+'k' } } } }
+    });
+    if(chartDep) chartDep.destroy();
+    const vtrs = viaturas.filter(v => v.ano <= 2022).sort((a,b) => a.condicao - b.condicao);
+    chartDep = new Chart(document.getElementById('chartDepreciacao').getContext('2d'), {
+        type:'bar', data:{ labels:vtrs.map(v=>v.prefixo), datasets:[{ label:'Condição %', data:vtrs.map(v=>v.condicao), backgroundColor:vtrs.map(v => v.condicao >= 70 ? '#22c55e' : v.condicao >= 50 ? '#eab308' : v.condicao >= 30 ? '#f97316' : '#ef4444'), borderRadius:6 }] },
+        options:{ indexAxis:'y', responsive:true, plugins:{ legend:{ display:false } }, scales:{ x:{ min:0, max:100, ticks:{ callback:v=>v+'%' } } } }
+    });
+}
+
+// ========== DASHBOARD CHARTS ==========
+function initDashboard() {
+    new Chart(document.getElementById('chartCustos').getContext('2d'), {
+        type:'line', data:{ labels:['Jan','Fev','Mar','Abr','Mai','Jun'],
+        datasets:[
+            { label:'Preventiva', data:[1800,1400,1600,4100,4600,3750], borderColor:'#22c55e', backgroundColor:'rgba(34,197,94,0.1)', fill:true, tension:0.4 },
+            { label:'Corretiva', data:[0,0,4200,15000,8500,5700], borderColor:'#ef4444', backgroundColor:'rgba(239,68,68,0.1)', fill:true, tension:0.4 }
+        ] }, options:{ responsive:true, scales:{ y:{ beginAtZero:true, ticks:{ callback:v=>'R$ '+v.toLocaleString('pt-BR') } } } }
+    });
+    new Chart(document.getElementById('chartStatus').getContext('2d'), {
+        type:'doughnut', data:{ labels:['Operacionais','Em Manutenção','Inoperantes'],
+        datasets:[{ data:[18,4,2], backgroundColor:['#22c55e','#f59e0b','#ef4444'], borderWidth:0 }] },
+        options:{ responsive:true, cutout:'65%', plugins:{ legend:{ position:'bottom', labels:{ boxWidth:12, padding:15, font:{size:11} } } } }
+    });
+    document.getElementById('proxManutencoes').innerHTML = manutencoes.slice(0,4).map(m =>
+        `<div class="flex items-center justify-between p-3 bg-gray-50 rounded-lg"><div class="flex items-center gap-3"><div class="w-8 h-8 rounded-lg ${m.tipo==='Preventiva'?'bg-green-100 text-green-600':'bg-red-100 text-red-600'} flex items-center justify-center"><i class="fas ${m.tipo==='Preventiva'?'fa-shield-check':'fa-wrench'} text-xs"></i></div><div><p class="text-sm font-medium text-navy-800">${m.viatura}</p><p class="text-xs text-gray-400">${m.desc}</p></div></div><div class="text-right"><p class="text-xs font-medium text-navy-700">${formatDate(m.data)}</p><p class="text-xs text-gray-400">${m.tipo}</p></div></div>`
+    ).join('');
+    document.getElementById('opsAtivas').innerHTML = operacoes.filter(o => o.status === 'Em Andamento').concat(operacoes.filter(o => o.status === 'Planejada').slice(0,1)).map(op =>
+        `<div class="flex items-center justify-between p-3 bg-gray-50 rounded-lg"><div class="flex items-center gap-3"><div class="w-8 h-8 rounded-lg ${op.status==='Em Andamento'?'bg-green-100 text-green-600':'bg-blue-100 text-blue-600'} flex items-center justify-center"><i class="fas fa-bullseye text-xs"></i></div><div><p class="text-sm font-medium text-navy-800">${op.nome}</p><p class="text-xs text-gray-400">${op.pelotao} — ${op.viaturas.length} vtr(s)</p></div></div><span class="px-2 py-0.5 rounded-full text-xs font-medium ${op.status==='Em Andamento'?'bg-green-100 text-green-700':'bg-blue-100 text-blue-700'}">${op.status}</span></div>`
+    ).join('');
+}
+
+// ========== UTILITIES ==========
+function formatDate(dateStr) {
+    const [y,m,d] = dateStr.split('-');
+    return `${d}/${m}/${y}`;
+}
+
+// ========== INIT ==========
+document.addEventListener('DOMContentLoaded', () => {
+    document.getElementById('currentDate').textContent = new Date().toLocaleDateString('pt-BR', { weekday:'long', year:'numeric', month:'long', day:'numeric' });
+    if (window.innerWidth < 1024) document.getElementById('sidebar').classList.add('-translate-x-full');
+    renderFrota();
+    initDashboard();
+});
+</script>
+</body>
+</html>
