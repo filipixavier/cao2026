@@ -63,16 +63,9 @@ tailwind.config = {
     <a href="#" class="sidebar-link flex items-center gap-3 px-5 py-2.5 text-sm text-pmes-100" data-page="frota" onclick="nav('frota')"><i class="fas fa-truck w-5 text-center text-pmes-200"></i>Frota de Viaturas</a>
     <a href="#" class="sidebar-link flex items-center gap-3 px-5 py-2.5 text-sm text-pmes-100" data-page="manutencao" onclick="nav('manutencao')"><i class="fas fa-tools w-5 text-center text-pmes-200"></i>Manutenção</a>
     <a href="#" class="sidebar-link flex items-center gap-3 px-5 py-2.5 text-sm text-pmes-100" data-page="isv" onclick="nav('isv')"><i class="fas fa-heart-pulse w-5 text-center text-pmes-200"></i>ISV — Saúde da Frota</a>
-    <a href="#" class="sidebar-link flex items-center gap-3 px-5 py-2.5 text-sm text-pmes-100" data-page="combustivel" onclick="nav('combustivel')"><i class="fas fa-gas-pump w-5 text-center text-pmes-200"></i>Combustível</a>
 
-    <p class="px-5 text-[10px] text-pmes-200 uppercase tracking-widest mt-5 mb-2"><i class="fas fa-map mr-1"></i>P3 — Planejamento</p>
-    <a href="#" class="sidebar-link flex items-center gap-3 px-5 py-2.5 text-sm text-pmes-100" data-page="niveis" onclick="nav('niveis')"><i class="fas fa-layer-group w-5 text-center text-pmes-200"></i>Níveis N1–N4</a>
-    <a href="#" class="sidebar-link flex items-center gap-3 px-5 py-2.5 text-sm text-pmes-100" data-page="escala" onclick="nav('escala')"><i class="fas fa-calendar-check w-5 text-center text-pmes-200"></i>Escala e Disponibilidade</a>
-    <a href="#" class="sidebar-link flex items-center gap-3 px-5 py-2.5 text-sm text-pmes-100" data-page="operacoes" onclick="nav('operacoes')"><i class="fas fa-bullseye w-5 text-center text-pmes-200"></i>Operações</a>
-
-    <p class="px-5 text-[10px] text-pmes-200 uppercase tracking-widest mt-5 mb-2"><i class="fas fa-users mr-1"></i>Pelotões / Ch. Turno</p>
-    <a href="#" class="sidebar-link flex items-center gap-3 px-5 py-2.5 text-sm text-pmes-100" data-page="solicitacoes" onclick="nav('solicitacoes')"><i class="fas fa-hand-paper w-5 text-center text-pmes-200"></i>Solicitações</a>
-    <a href="#" class="sidebar-link flex items-center gap-3 px-5 py-2.5 text-sm text-pmes-100" data-page="alocacoes" onclick="nav('alocacoes')"><i class="fas fa-arrows-turn-to-dots w-5 text-center text-pmes-200"></i>Alocações Atuais</a>
+    <p class="px-5 text-[10px] text-pmes-200 uppercase tracking-widest mt-5 mb-2"><i class="fas fa-binoculars mr-1"></i>Operacional</p>
+    <a href="#" class="sidebar-link flex items-center gap-3 px-5 py-2.5 text-sm text-pmes-100" data-page="operacional" onclick="nav('operacional')"><i class="fas fa-layer-group w-5 text-center text-pmes-200"></i>Situação e Níveis</a>
 
     <p class="px-5 text-[10px] text-pmes-200 uppercase tracking-widest mt-5 mb-2"><i class="fas fa-chart-bar mr-1"></i>Relatórios</p>
     <a href="#" class="sidebar-link flex items-center gap-3 px-5 py-2.5 text-sm text-pmes-100" data-page="relatorios" onclick="nav('relatorios')"><i class="fas fa-file-lines w-5 text-center text-pmes-200"></i>Relatórios Gerais</a>
@@ -136,7 +129,7 @@ tailwind.config = {
         </div>
         <button class="bg-pmes-400 text-white px-4 py-2 rounded-lg text-sm font-medium hover:bg-pmes-300 transition" onclick="openModal('mdlViatura')"><i class="fas fa-plus mr-2"></i>Nova Viatura</button>
       </div>
-      <div class="bg-white rounded-xl shadow-sm overflow-hidden"><div class="overflow-x-auto"><table class="w-full text-sm"><thead class="bg-pmes-50 text-pmes-400"><tr><th class="text-left px-4 py-3 font-semibold">Prefixo</th><th class="text-left px-4 py-3 font-semibold">Modelo</th><th class="text-left px-4 py-3 font-semibold">Placa</th><th class="text-left px-4 py-3 font-semibold">Modalidade</th><th class="text-right px-4 py-3 font-semibold">Km</th><th class="text-center px-4 py-3 font-semibold">Status</th><th class="text-center px-4 py-3 font-semibold">ISV</th><th class="text-center px-4 py-3 font-semibold">Faixa</th><th class="text-center px-4 py-3 font-semibold">Ações</th></tr></thead><tbody id="tbFrota" class="divide-y divide-gray-100"></tbody></table></div></div>
+      <div class="bg-white rounded-xl shadow-sm overflow-hidden"><div class="overflow-x-auto"><table class="w-full text-sm"><thead class="bg-pmes-50 text-pmes-400"><tr><th class="text-left px-4 py-3 font-semibold">Prefixo</th><th class="text-left px-4 py-3 font-semibold">Modelo</th><th class="text-left px-4 py-3 font-semibold">Placa</th><th class="text-left px-4 py-3 font-semibold">Modalidade</th><th class="text-center px-4 py-3 font-semibold">Faixa de Km</th><th class="text-center px-4 py-3 font-semibold">Status</th><th class="text-center px-4 py-3 font-semibold">ISV</th><th class="text-center px-4 py-3 font-semibold">Faixa</th><th class="text-center px-4 py-3 font-semibold">Ações</th></tr></thead><tbody id="tbFrota" class="divide-y divide-gray-100"></tbody></table></div></div>
     </section>
 
     <!-- ========== MANUTENÇÃO ========== -->
@@ -195,35 +188,29 @@ tailwind.config = {
       </div>
     </section>
 
-    <!-- ========== COMBUSTÍVEL ========== -->
-    <section id="pg-combustivel" class="page hidden fade-in">
-      <div class="grid grid-cols-1 sm:grid-cols-3 gap-5 mb-6">
-        <div class="bg-white rounded-xl shadow-sm p-5 border-l-4 border-blue-500"><p class="text-xs text-gray-500 uppercase">Consumo Mensal</p><p class="text-2xl font-bold text-pmes-400 mt-1">4.820 L</p><p class="text-xs text-gray-400">Junho/2026</p></div>
-        <div class="bg-white rounded-xl shadow-sm p-5 border-l-4 border-green-500"><p class="text-xs text-gray-500 uppercase">Média da Frota</p><p class="text-2xl font-bold text-green-600 mt-1">7,8 km/L</p><p class="text-xs text-gray-400">Ref. Meta: 8,5 km/L</p></div>
-        <div class="bg-white rounded-xl shadow-sm p-5 border-l-4 border-amber-500"><p class="text-xs text-gray-500 uppercase">Gasto Mensal</p><p class="text-2xl font-bold text-amber-600 mt-1">R$ 27.956,00</p><p class="text-xs text-gray-400">R$ 5,80/L médio</p></div>
+    <!-- ========== OPERACIONAL (P3 / Pelotões — Consulta) ========== -->
+    <section id="pg-operacional" class="page hidden fade-in">
+      <div id="opNivelBanner" class="rounded-xl p-6 mb-6 border-3 border-gray-200 bg-white"></div>
+      <div class="grid grid-cols-2 sm:grid-cols-4 gap-4 mb-6">
+        <div class="bg-white rounded-xl shadow-sm p-4 text-center border-l-4 border-green-500"><p class="text-3xl font-bold text-green-600" id="opVtrOp">0</p><p class="text-xs text-gray-500 mt-1">Operacionais</p></div>
+        <div class="bg-white rounded-xl shadow-sm p-4 text-center border-l-4 border-amber-500"><p class="text-3xl font-bold text-amber-600" id="opVtrMan">0</p><p class="text-xs text-gray-500 mt-1">Em Manutenção</p></div>
+        <div class="bg-white rounded-xl shadow-sm p-4 text-center border-l-4 border-red-500"><p class="text-3xl font-bold text-red-600" id="opVtrInop">0</p><p class="text-xs text-gray-500 mt-1">Inoperantes</p></div>
+        <div class="bg-white rounded-xl shadow-sm p-4 text-center border-l-4 border-blue-500"><p class="text-3xl font-bold text-blue-600" id="opVtrTotal">0</p><p class="text-xs text-gray-500 mt-1">Total da Frota</p></div>
       </div>
-      <div class="grid grid-cols-1 lg:grid-cols-2 gap-5">
-        <div class="bg-white rounded-xl shadow-sm p-5"><h3 class="font-semibold text-pmes-400 mb-4">Consumo por Viatura (L/mês)</h3><canvas id="chComb" height="160"></canvas></div>
-        <div class="bg-white rounded-xl shadow-sm p-5"><h3 class="font-semibold text-pmes-400 mb-4">Últimos Abastecimentos</h3><div id="listaAbast" class="space-y-3"></div></div>
+      <div class="bg-white rounded-xl shadow-sm p-5 mb-5">
+        <h3 class="font-semibold text-pmes-400 mb-4"><i class="fas fa-clipboard-list text-pmes-300 mr-2"></i>Condição Atual por Modalidade</h3>
+        <div class="overflow-x-auto"><table class="w-full text-sm"><thead class="bg-pmes-400 text-white"><tr><th class="text-left px-4 py-3">Modalidade</th><th class="text-center px-4 py-3">Alocadas</th><th class="text-center px-4 py-3">Operacionais</th><th class="text-center px-4 py-3">Manutenção</th><th class="text-center px-4 py-3">Inoperantes</th><th class="text-center px-4 py-3">Mínimo Nível</th><th class="text-center px-4 py-3">Situação</th></tr></thead><tbody id="tbCondMod" class="divide-y divide-gray-100"></tbody></table></div>
       </div>
-    </section>
-
-    <!-- ========== NÍVEIS N1-N4 ========== -->
-    <section id="pg-niveis" class="page hidden fade-in">
-      <div id="nivelPainel" class="rounded-xl p-6 mb-6 border-3"></div>
-      <!-- Tabela Mínimos -->
+      <div class="bg-white rounded-xl shadow-sm p-5 mb-5">
+        <h3 class="font-semibold text-pmes-400 mb-4"><i class="fas fa-info-circle text-pmes-300 mr-2"></i>Referência — Níveis de Disponibilidade (NP 6.2)</h3>
+        <div id="opNiveisCards" class="grid grid-cols-2 md:grid-cols-4 gap-4"></div>
+      </div>
       <div class="bg-white rounded-xl shadow-sm p-5 mb-5">
         <h3 class="font-semibold text-pmes-400 mb-4"><i class="fas fa-table text-pmes-300 mr-2"></i>Mínimos Obrigatórios por Modalidade e Nível (NP 6.3.2)</h3>
-        <div class="overflow-x-auto">
-          <table class="w-full text-sm" id="tbMinimos">
-            <thead class="bg-pmes-400 text-white"><tr><th class="text-left px-4 py-3">Modalidade</th><th class="text-center px-4 py-3"><span class="px-2 py-0.5 rounded-full bg-nv-1 text-white text-xs">N1</span></th><th class="text-center px-4 py-3"><span class="px-2 py-0.5 rounded-full bg-nv-2 text-white text-xs">N2</span></th><th class="text-center px-4 py-3"><span class="px-2 py-0.5 rounded-full bg-nv-3 text-white text-xs">N3</span></th><th class="text-center px-4 py-3"><span class="px-2 py-0.5 rounded-full bg-nv-4 text-white text-xs">N4</span></th><th class="text-left px-4 py-3">Observação</th></tr></thead>
-            <tbody class="divide-y divide-gray-100" id="tbMinBody"></tbody>
-          </table>
-        </div>
+        <div class="overflow-x-auto"><table class="w-full text-sm"><thead class="bg-pmes-400 text-white"><tr><th class="text-left px-4 py-3">Modalidade</th><th class="text-center px-4 py-3"><span class="px-2 py-0.5 rounded-full bg-nv-1 text-white text-xs">N1</span></th><th class="text-center px-4 py-3"><span class="px-2 py-0.5 rounded-full bg-nv-2 text-white text-xs">N2</span></th><th class="text-center px-4 py-3"><span class="px-2 py-0.5 rounded-full bg-nv-3 text-white text-xs">N3</span></th><th class="text-center px-4 py-3"><span class="px-2 py-0.5 rounded-full bg-nv-4 text-white text-xs">N4</span></th><th class="text-left px-4 py-3">Observação</th></tr></thead><tbody class="divide-y divide-gray-100" id="tbMinBody"></tbody></table></div>
       </div>
-      <!-- Faixas ISV -->
       <div class="bg-white rounded-xl shadow-sm p-5">
-        <h3 class="font-semibold text-pmes-400 mb-4"><i class="fas fa-info-circle text-pmes-300 mr-2"></i>Faixas do ISV (Anexo IV — IV.6.2)</h3>
+        <h3 class="font-semibold text-pmes-400 mb-4"><i class="fas fa-heart-pulse text-pmes-300 mr-2"></i>Faixas do ISV (Anexo IV — IV.6.2)</h3>
         <table class="w-full text-sm"><thead class="bg-pmes-400 text-white"><tr><th class="px-4 py-2">Faixa</th><th class="px-4 py-2">Intervalo</th><th class="px-4 py-2">Designação</th><th class="text-left px-4 py-2">Ação Recomendada</th></tr></thead>
         <tbody class="divide-y divide-gray-100">
           <tr><td class="px-4 py-2 text-center"><span class="px-2 py-0.5 rounded-full bg-nv-1 text-white text-xs font-bold">A</span></td><td class="px-4 py-2 text-center">≥ 75</td><td class="px-4 py-2 text-center">Excelente</td><td class="px-4 py-2 text-sm text-gray-600">Apta a qualquer modalidade, sem restrições</td></tr>
@@ -232,51 +219,6 @@ tailwind.config = {
           <tr class="bg-pmes-50"><td class="px-4 py-2 text-center"><span class="px-2 py-0.5 rounded-full bg-nv-4 text-white text-xs font-bold">D</span></td><td class="px-4 py-2 text-center">&lt; 25</td><td class="px-4 py-2 text-center">Crítico</td><td class="px-4 py-2 text-sm text-gray-600">Avaliar manutenção vs. substituição; priorizar serviços leves</td></tr>
         </tbody></table>
       </div>
-    </section>
-
-    <!-- ========== ESCALA / DISPONIBILIDADE ========== -->
-    <section id="pg-escala" class="page hidden fade-in">
-      <div class="bg-white rounded-xl shadow-sm p-5 mb-5">
-        <h3 class="font-semibold text-pmes-400 mb-4"><i class="fas fa-calendar-alt text-pmes-300 mr-2"></i>Disponibilidade Semanal — Por Modalidade</h3>
-        <div class="overflow-x-auto"><table class="w-full text-sm"><thead class="bg-pmes-400 text-white"><tr><th class="text-left px-4 py-3">Viatura</th><th class="text-left px-3 py-3">Modalidade</th><th class="text-center px-2 py-3">Seg</th><th class="text-center px-2 py-3">Ter</th><th class="text-center px-2 py-3">Qua</th><th class="text-center px-2 py-3">Qui</th><th class="text-center px-2 py-3">Sex</th><th class="text-center px-2 py-3">Sáb</th><th class="text-center px-2 py-3">Dom</th></tr></thead><tbody id="tbDisp" class="divide-y divide-gray-100"></tbody></table></div>
-        <div class="flex gap-5 mt-4 text-xs text-gray-500">
-          <span><span class="inline-block w-3 h-3 rounded bg-nv-1 mr-1"></span>Disponível</span>
-          <span><span class="inline-block w-3 h-3 rounded bg-pmes-300 mr-1"></span>Em Operação</span>
-          <span><span class="inline-block w-3 h-3 rounded bg-nv-2 mr-1"></span>Man. Preventiva</span>
-          <span><span class="inline-block w-3 h-3 rounded bg-nv-3 mr-1"></span>Man. Corretiva</span>
-          <span><span class="inline-block w-3 h-3 rounded bg-nv-4 mr-1"></span>Inoperante</span>
-        </div>
-      </div>
-      <div class="grid grid-cols-1 sm:grid-cols-4 gap-5">
-        <div class="bg-white rounded-xl shadow-sm p-5 text-center"><p class="text-3xl font-bold text-green-600" id="dispHoje">0</p><p class="text-xs text-gray-500 mt-1">Disponíveis Hoje</p></div>
-        <div class="bg-white rounded-xl shadow-sm p-5 text-center"><p class="text-3xl font-bold text-blue-600" id="dispOp">0</p><p class="text-xs text-gray-500 mt-1">Em Operação</p></div>
-        <div class="bg-white rounded-xl shadow-sm p-5 text-center"><p class="text-3xl font-bold text-amber-600" id="dispMan">0</p><p class="text-xs text-gray-500 mt-1">Em Manutenção</p></div>
-        <div class="bg-white rounded-xl shadow-sm p-5 text-center"><p class="text-3xl font-bold text-red-600" id="dispInop">0</p><p class="text-xs text-gray-500 mt-1">Inoperantes</p></div>
-      </div>
-    </section>
-
-    <!-- ========== OPERAÇÕES ========== -->
-    <section id="pg-operacoes" class="page hidden fade-in">
-      <div class="flex flex-wrap items-center justify-between gap-3 mb-5">
-        <h3 class="font-semibold text-pmes-400"><i class="fas fa-bullseye text-pmes-300 mr-2"></i>Operações Planejadas</h3>
-        <button class="bg-pmes-400 text-white px-4 py-2 rounded-lg text-sm font-medium hover:bg-pmes-300" onclick="openModal('mdlOp')"><i class="fas fa-plus mr-2"></i>Nova Operação</button>
-      </div>
-      <div class="grid grid-cols-1 md:grid-cols-2 gap-5" id="cardsOps"></div>
-    </section>
-
-    <!-- ========== SOLICITAÇÕES ========== -->
-    <section id="pg-solicitacoes" class="page hidden fade-in">
-      <div class="flex flex-wrap items-center justify-between gap-3 mb-5">
-        <h3 class="font-semibold text-pmes-400"><i class="fas fa-hand-paper text-pmes-300 mr-2"></i>Solicitações de Viatura</h3>
-        <button class="bg-pmes-400 text-white px-4 py-2 rounded-lg text-sm font-medium hover:bg-pmes-300" onclick="openModal('mdlSolic')"><i class="fas fa-plus mr-2"></i>Nova Solicitação</button>
-      </div>
-      <div class="bg-white rounded-xl shadow-sm overflow-hidden"><table class="w-full text-sm"><thead class="bg-pmes-50 text-pmes-400"><tr><th class="text-left px-4 py-3 font-semibold">Nº</th><th class="text-left px-4 py-3 font-semibold">Pelotão</th><th class="text-left px-4 py-3 font-semibold">Finalidade</th><th class="text-left px-4 py-3 font-semibold">Data</th><th class="text-center px-4 py-3 font-semibold">Qtd</th><th class="text-center px-4 py-3 font-semibold">Status</th><th class="text-center px-4 py-3 font-semibold">Ações</th></tr></thead><tbody id="tbSolic" class="divide-y divide-gray-100"></tbody></table></div>
-    </section>
-
-    <!-- ========== ALOCAÇÕES ========== -->
-    <section id="pg-alocacoes" class="page hidden fade-in">
-      <h3 class="font-semibold text-pmes-400 mb-5"><i class="fas fa-arrows-turn-to-dots text-pmes-300 mr-2"></i>Alocação Atual por Modalidade</h3>
-      <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-5" id="cardsAloc"></div>
     </section>
 
     <!-- ========== RELATÓRIOS ========== -->
@@ -304,7 +246,7 @@ tailwind.config = {
     <div class="p-5 space-y-4">
       <div class="grid grid-cols-2 gap-4"><div><label class="text-xs font-medium text-gray-600">Prefixo</label><input type="text" class="w-full border rounded-lg px-3 py-2 text-sm mt-1" placeholder="VTR-035"></div><div><label class="text-xs font-medium text-gray-600">Placa</label><input type="text" class="w-full border rounded-lg px-3 py-2 text-sm mt-1" placeholder="ABC-1D23"></div></div>
       <div class="grid grid-cols-2 gap-4"><div><label class="text-xs font-medium text-gray-600">Modelo</label><input type="text" class="w-full border rounded-lg px-3 py-2 text-sm mt-1" placeholder="Hilux SW4"></div><div><label class="text-xs font-medium text-gray-600">Ano Fabricação</label><input type="number" class="w-full border rounded-lg px-3 py-2 text-sm mt-1" placeholder="2024" value="2024"></div></div>
-      <div class="grid grid-cols-2 gap-4"><div><label class="text-xs font-medium text-gray-600">Km Atual</label><input type="number" class="w-full border rounded-lg px-3 py-2 text-sm mt-1" placeholder="0"></div><div><label class="text-xs font-medium text-gray-600">Custo Manut. Acum. (R$)</label><input type="number" class="w-full border rounded-lg px-3 py-2 text-sm mt-1" placeholder="0" value="0"></div></div>
+      <div class="grid grid-cols-2 gap-4"><div><label class="text-xs font-medium text-gray-600">Faixa de Km</label><select class="w-full border rounded-lg px-3 py-2 text-sm mt-1" id="mdlVtrFaixa"></select></div><div><label class="text-xs font-medium text-gray-600">Custo Manut. Acum. (R$)</label><input type="number" class="w-full border rounded-lg px-3 py-2 text-sm mt-1" placeholder="0" value="0"></div></div>
       <div><label class="text-xs font-medium text-gray-600">Modalidade Vinculada</label><select class="w-full border rounded-lg px-3 py-2 text-sm mt-1" id="mdlVtrMod"></select></div>
     </div>
     <div class="p-5 border-t flex justify-end gap-3"><button onclick="closeModal('mdlViatura')" class="px-4 py-2 text-sm text-gray-600 border rounded-lg hover:bg-gray-50">Cancelar</button><button onclick="closeModal('mdlViatura')" class="px-4 py-2 text-sm bg-pmes-400 text-white rounded-lg hover:bg-pmes-300">Cadastrar</button></div>
@@ -324,31 +266,6 @@ tailwind.config = {
   </div>
 </div>
 
-<div id="mdlOp" class="fixed inset-0 z-50 hidden items-center justify-center modal-bg">
-  <div class="bg-white rounded-2xl shadow-2xl w-full max-w-lg mx-4 max-h-[90vh] overflow-y-auto">
-    <div class="flex items-center justify-between p-5 border-b"><h3 class="font-bold text-pmes-400"><i class="fas fa-bullseye mr-2"></i>Nova Operação</h3><button onclick="closeModal('mdlOp')" class="text-gray-400 hover:text-gray-600"><i class="fas fa-times"></i></button></div>
-    <div class="p-5 space-y-4">
-      <div><label class="text-xs font-medium text-gray-600">Nome</label><input type="text" class="w-full border rounded-lg px-3 py-2 text-sm mt-1" placeholder="Ex: Operação Sentinela"></div>
-      <div class="grid grid-cols-2 gap-4"><div><label class="text-xs font-medium text-gray-600">Data Início</label><input type="date" class="w-full border rounded-lg px-3 py-2 text-sm mt-1"></div><div><label class="text-xs font-medium text-gray-600">Data Fim</label><input type="date" class="w-full border rounded-lg px-3 py-2 text-sm mt-1"></div></div>
-      <div><label class="text-xs font-medium text-gray-600">Viaturas Necessárias</label><input type="number" class="w-full border rounded-lg px-3 py-2 text-sm mt-1" placeholder="3"></div>
-      <div><label class="text-xs font-medium text-gray-600">Descrição</label><textarea class="w-full border rounded-lg px-3 py-2 text-sm mt-1" rows="3" placeholder="Detalhes da operação..."></textarea></div>
-    </div>
-    <div class="p-5 border-t flex justify-end gap-3"><button onclick="closeModal('mdlOp')" class="px-4 py-2 text-sm text-gray-600 border rounded-lg hover:bg-gray-50">Cancelar</button><button onclick="closeModal('mdlOp')" class="px-4 py-2 text-sm bg-pmes-400 text-white rounded-lg hover:bg-pmes-300">Planejar</button></div>
-  </div>
-</div>
-
-<div id="mdlSolic" class="fixed inset-0 z-50 hidden items-center justify-center modal-bg">
-  <div class="bg-white rounded-2xl shadow-2xl w-full max-w-lg mx-4 max-h-[90vh] overflow-y-auto">
-    <div class="flex items-center justify-between p-5 border-b"><h3 class="font-bold text-pmes-400"><i class="fas fa-hand-paper mr-2"></i>Nova Solicitação</h3><button onclick="closeModal('mdlSolic')" class="text-gray-400 hover:text-gray-600"><i class="fas fa-times"></i></button></div>
-    <div class="p-5 space-y-4">
-      <div><label class="text-xs font-medium text-gray-600">Pelotão Solicitante</label><select class="w-full border rounded-lg px-3 py-2 text-sm mt-1"><option>1º Pelotão</option><option>2º Pelotão</option><option>3º Pelotão</option><option>Força Tática</option></select></div>
-      <div><label class="text-xs font-medium text-gray-600">Finalidade</label><input type="text" class="w-full border rounded-lg px-3 py-2 text-sm mt-1" placeholder="Ex: Patrulhamento Setor Norte"></div>
-      <div class="grid grid-cols-2 gap-4"><div><label class="text-xs font-medium text-gray-600">Data</label><input type="date" class="w-full border rounded-lg px-3 py-2 text-sm mt-1"></div><div><label class="text-xs font-medium text-gray-600">Qtd Viaturas</label><input type="number" class="w-full border rounded-lg px-3 py-2 text-sm mt-1" placeholder="1" value="1"></div></div>
-      <div><label class="text-xs font-medium text-gray-600">Observações</label><textarea class="w-full border rounded-lg px-3 py-2 text-sm mt-1" rows="2"></textarea></div>
-    </div>
-    <div class="p-5 border-t flex justify-end gap-3"><button onclick="closeModal('mdlSolic')" class="px-4 py-2 text-sm text-gray-600 border rounded-lg hover:bg-gray-50">Cancelar</button><button onclick="closeModal('mdlSolic')" class="px-4 py-2 text-sm bg-pmes-400 text-white rounded-lg hover:bg-pmes-300">Solicitar</button></div>
-  </div>
-</div>
 
 <!-- ===== JAVASCRIPT ===== -->
 <script>
@@ -367,6 +284,15 @@ const MODALIDADES = [
   {id:'RES',    nome:'Reserva / Op. Eventuais',           kmAno:20000, n1:6, n2:0, n3:0, n4:0, obs:'Suspender a partir de N2'},
 ];
 const TOTAL_N1=34, TOTAL_N2=22, TOTAL_N3=15, TOTAL_N4=10;
+const FAIXAS_KM = [
+  {id:'F1',label:'Até 20.000',min:0,max:20000,mid:10000},
+  {id:'F2',label:'20.001 – 50.000',min:20001,max:50000,mid:35000},
+  {id:'F3',label:'50.001 – 80.000',min:50001,max:80000,mid:65000},
+  {id:'F4',label:'80.001 – 120.000',min:80001,max:120000,mid:100000},
+  {id:'F5',label:'120.001 – 160.000',min:120001,max:160000,mid:140000},
+  {id:'F6',label:'Acima de 160.000',min:160001,max:999999,mid:180000},
+];
+function getFaixaKm(km){return(FAIXAS_KM.find(f=>km>=f.min&&km<=f.max)||FAIXAS_KM[5]).label}
 
 // ========== FROTA MOCK (34 VTR) ==========
 const VTR = [
@@ -427,21 +353,6 @@ const HISTORICO_MAN = [
   {data:'2026-02-18',vtr:'VTR-029',tipo:'Preventiva',desc:'Troca de pneus',custo:2800,st:'Concluída'},
 ];
 
-const OPERACOES = [
-  {nome:'Op. Sentinela',inicio:'2026-06-15',fim:'2026-06-22',vtrs:['VTR-001','VTR-005','VTR-006'],desc:'Reforço patrulhamento noturno Setor Norte',st:'Em Andamento'},
-  {nome:'Op. Guardiões',inicio:'2026-06-18',fim:'2026-06-18',vtrs:['VTR-018'],desc:'Escolta e segurança de evento público',st:'Em Andamento'},
-  {nome:'Op. Cerco Total',inicio:'2026-06-20',fim:'2026-06-25',vtrs:['VTR-008','VTR-019','VTR-012','VTR-024'],desc:'Saturação região central — P3 determinou 4 VTR',st:'Planejada'},
-  {nome:'Op. Vigia',inicio:'2026-06-25',fim:'2026-06-30',vtrs:['VTR-014','VTR-030'],desc:'Monitoramento de pontos críticos',st:'Planejada'},
-];
-
-const SOLICITACOES = [
-  {id:'SOL-001',pel:'1º Pelotão',fin:'Patrulhamento reforçado Setor Leste',data:'2026-06-20',qtd:2,st:'Aprovada'},
-  {id:'SOL-002',pel:'3º Pelotão',fin:'Transporte equipe para operação',data:'2026-06-22',qtd:3,st:'Pendente'},
-  {id:'SOL-003',pel:'Força Tática',fin:'Apoio a blitz',data:'2026-06-19',qtd:1,st:'Aprovada'},
-  {id:'SOL-004',pel:'1º Pelotão',fin:'Escolta de preso',data:'2026-06-21',qtd:2,st:'Pendente'},
-  {id:'SOL-005',pel:'2º Pelotão',fin:'Policiamento evento esportivo',data:'2026-06-24',qtd:4,st:'Negada'},
-];
-
 // ========== ISV CALCULATION (Anexo IV) ==========
 function clamp(v,min,max){return Math.max(min,Math.min(max,v))}
 
@@ -483,12 +394,7 @@ const TITLES = {
   frota:['Frota de Viaturas','P4 — Cadastro e gestão da frota (item 6.1)'],
   manutencao:['Manutenção','P4 — Controle de manutenções preventivas e corretivas'],
   isv:['ISV — Saúde da Frota','P4 — Índice de Saúde da Viatura (Anexo IV)'],
-  combustivel:['Combustível','P4 — Monitoramento de consumo e abastecimento'],
-  niveis:['Níveis N1–N4','P3 — Níveis de disponibilidade e contingenciamento (item 6.2)'],
-  escala:['Escala e Disponibilidade','P3 — Disponibilidade para planejamento operacional'],
-  operacoes:['Operações','P3 — Planejamento e alocação de viaturas'],
-  solicitacoes:['Solicitações','Pelotões — Solicitações de viatura'],
-  alocacoes:['Alocações Atuais','Pelotões — Distribuição por modalidade'],
+  operacional:['Operacional — Situação e Níveis','P3 / Pelotões — Consulta de disponibilidade e nível de contingenciamento'],
   relatorios:['Relatórios','Análises gerenciais e exportações'],
 };
 function nav(pg){
@@ -497,7 +403,7 @@ function nav(pg){
   const el=document.getElementById('pg-'+pg); if(el)el.classList.remove('hidden');
   const lk=document.querySelector(`[data-page="${pg}"]`); if(lk)lk.classList.add('active');
   if(TITLES[pg]){document.getElementById('pageTitle').textContent=TITLES[pg][0];document.getElementById('pageSub').textContent=TITLES[pg][1]}
-  const renders={frota:renderFrota,manutencao:renderManut,isv:renderISV,combustivel:renderComb,niveis:renderNiveis,escala:renderEscala,operacoes:renderOps,solicitacoes:renderSolic,alocacoes:renderAloc,relatorios:renderRel};
+  const renders={frota:renderFrota,manutencao:renderManut,isv:renderISV,operacional:renderOperacional,relatorios:renderRel};
   if(renders[pg])renders[pg]();
   if(window.innerWidth<1024)document.getElementById('sidebar').classList.add('-translate-x-full');
 }
@@ -561,7 +467,7 @@ function renderFrota(){
     return ms&&mst&&mm;
   });
   const modNome=id=>(MODALIDADES.find(m=>m.id===id)||{}).nome||id;
-  document.getElementById('tbFrota').innerHTML=filtered.map(v=>{const d=calcISVData(v);return`<tr class="hover:bg-gray-50"><td class="px-4 py-3 font-semibold text-pmes-400">${v.pref}</td><td class="px-4 py-3 text-gray-600">${v.modelo}</td><td class="px-4 py-3 text-gray-500 font-mono text-xs">${v.placa}</td><td class="px-4 py-3 text-xs text-gray-500">${modNome(v.mod)}</td><td class="px-4 py-3 text-right text-gray-600">${v.km.toLocaleString('pt-BR')} km</td><td class="px-4 py-3 text-center">${stBadge(v.status)}</td><td class="px-4 py-3 text-center font-bold ${d.faixa==='D'?'text-red-600':d.faixa==='C'?'text-amber-600':d.faixa==='B'?'text-blue-600':'text-green-600'}">${d.isv.toFixed(1)}</td><td class="px-4 py-3 text-center">${faixaBadge(d.faixa,d.faixaCor)}</td><td class="px-4 py-3 text-center"><button class="text-pmes-300 hover:text-pmes-400 mx-1" title="Detalhes"><i class="fas fa-eye text-xs"></i></button></td></tr>`}).join('');
+  document.getElementById('tbFrota').innerHTML=filtered.map(v=>{const d=calcISVData(v);return`<tr class="hover:bg-gray-50"><td class="px-4 py-3 font-semibold text-pmes-400">${v.pref}</td><td class="px-4 py-3 text-gray-600">${v.modelo}</td><td class="px-4 py-3 text-gray-500 font-mono text-xs">${v.placa}</td><td class="px-4 py-3 text-xs text-gray-500">${modNome(v.mod)}</td><td class="px-4 py-3 text-center text-gray-600 text-xs">${getFaixaKm(v.km)}</td><td class="px-4 py-3 text-center">${stBadge(v.status)}</td><td class="px-4 py-3 text-center font-bold ${d.faixa==='D'?'text-red-600':d.faixa==='C'?'text-amber-600':d.faixa==='B'?'text-blue-600':'text-green-600'}">${d.isv.toFixed(1)}</td><td class="px-4 py-3 text-center">${faixaBadge(d.faixa,d.faixaCor)}</td><td class="px-4 py-3 text-center"><button class="text-pmes-300 hover:text-pmes-400 mx-1" title="Detalhes"><i class="fas fa-eye text-xs"></i></button></td></tr>`}).join('');
 }
 
 // ========== MANUTENÇÃO ==========
@@ -621,84 +527,50 @@ function calcISV(){
     <p class="text-[10px] text-gray-400 mt-2">ISV = 0,30×${d.i1.toFixed(1)} + 0,30×${d.i2.toFixed(1)} + 0,40×${d.i3.toFixed(1)} = ${d.isv.toFixed(1)}</p>`;
 }
 
-// ========== COMBUSTÍVEL ==========
-let chComb;
-function renderComb(){
-  if(chComb)chComb.destroy();
-  const top=VTR.filter(v=>v.status==='Operacional').slice(0,12);
-  chComb=new Chart(document.getElementById('chComb').getContext('2d'),{type:'bar',data:{labels:top.map(v=>v.pref),datasets:[{label:'Litros/mês',data:top.map(()=>Math.floor(100+Math.random()*250)),backgroundColor:'#D4930A',borderRadius:6}]},options:{responsive:true,plugins:{legend:{display:false}},scales:{y:{beginAtZero:true}}}});
-  document.getElementById('listaAbast').innerHTML=[
-    {vtr:'VTR-001',l:55,data:'17/06/2026',km:98000},{vtr:'VTR-005',l:48,data:'17/06/2026',km:105000},
-    {vtr:'VTR-008',l:35,data:'16/06/2026',km:22000},{vtr:'VTR-018',l:52,data:'16/06/2026',km:55000},
-    {vtr:'VTR-003',l:45,data:'15/06/2026',km:72000},{vtr:'VTR-019',l:50,data:'15/06/2026',km:82000},
-  ].map(a=>`<div class="flex items-center justify-between p-3 bg-gray-50 rounded-lg"><div><span class="font-semibold text-pmes-400 text-sm">${a.vtr}</span><span class="text-xs text-gray-400 ml-2">${a.km.toLocaleString('pt-BR')} km</span></div><div class="text-right"><span class="text-sm font-medium text-amber-600">${a.l} L</span><span class="text-xs text-gray-400 ml-2">${a.data}</span></div></div>`).join('');
-}
-
-// ========== NÍVEIS ==========
-function renderNiveis(){
+// ========== OPERACIONAL (P3 / Pelotões — Consulta) ==========
+function renderOperacional(){
   const nv=getNivel();
-  document.getElementById('nivelPainel').className=`rounded-xl p-6 mb-6 border-3 ${nv.borda} bg-white`;
-  document.getElementById('nivelPainel').innerHTML=`
-    <div class="flex flex-wrap items-center gap-6 mb-5">
-      <div class="w-20 h-20 ${nv.cor} rounded-2xl flex items-center justify-center text-white font-bold text-3xl">${nv.n}</div>
-      <div><h3 class="text-2xl font-bold text-pmes-400">${nv.nome}</h3><p class="text-sm text-gray-600 mt-1">${nv.txt}</p><p class="text-xs text-gray-400 mt-1">VTR operacionais: <strong>${nv.op}</strong> de ${VTR.length} | Ref. NP: ≥34 para N1</p></div>
-    </div>
-    <div class="grid grid-cols-2 md:grid-cols-4 gap-4">
-      <div class="p-4 rounded-lg border-2 ${nv.n==='N1'?'border-nv-1 bg-green-50':'border-gray-200'} text-center"><p class="font-bold ${nv.n==='N1'?'text-nv-1':'text-gray-400'}">N1</p><p class="text-xs text-gray-500">≥ 34 VTR</p><p class="text-[10px] text-gray-400">Operação Plena</p></div>
-      <div class="p-4 rounded-lg border-2 ${nv.n==='N2'?'border-nv-2 bg-yellow-50':'border-gray-200'} text-center"><p class="font-bold ${nv.n==='N2'?'text-nv-2':'text-gray-400'}">N2</p><p class="text-xs text-gray-500">27–33 VTR</p><p class="text-[10px] text-gray-400">Alerta Amarelo</p></div>
-      <div class="p-4 rounded-lg border-2 ${nv.n==='N3'?'border-nv-3 bg-orange-50':'border-gray-200'} text-center"><p class="font-bold ${nv.n==='N3'?'text-nv-3':'text-gray-400'}">N3</p><p class="text-xs text-gray-500">19–26 VTR</p><p class="text-[10px] text-gray-400">Alerta Laranja</p></div>
-      <div class="p-4 rounded-lg border-2 ${nv.n==='N4'?'border-nv-4 bg-red-50':'border-gray-200'} text-center"><p class="font-bold ${nv.n==='N4'?'text-nv-4':'text-gray-400'}">N4</p><p class="text-xs text-gray-500">&lt; 19 VTR</p><p class="text-[10px] text-gray-400">Contingência Crítica</p></div>
-    </div>`;
-  // Tabela mínimos
-  document.getElementById('tbMinBody').innerHTML=MODALIDADES.map(m=>`<tr class="hover:bg-gray-50"><td class="px-4 py-2 text-sm">${m.nome}</td><td class="px-4 py-2 text-center font-medium">${m.n1}</td><td class="px-4 py-2 text-center font-medium">${m.n2}</td><td class="px-4 py-2 text-center font-medium">${m.n3}</td><td class="px-4 py-2 text-center font-medium">${m.n4}</td><td class="px-4 py-2 text-xs text-gray-500">${m.obs}</td></tr>`).join('')+`<tr class="bg-pmes-50 font-bold"><td class="px-4 py-2 text-sm text-pmes-400">TOTAL</td><td class="px-4 py-2 text-center">${TOTAL_N1}</td><td class="px-4 py-2 text-center">${TOTAL_N2}</td><td class="px-4 py-2 text-center">${TOTAL_N3}</td><td class="px-4 py-2 text-center">${TOTAL_N4}</td><td class="px-4 py-2 text-xs text-gray-500">Referência orientativa</td></tr>`;
-}
-
-// ========== ESCALA ==========
-function renderEscala(){
-  const statusMap={'Operacional':'d','Manutenção Preventiva':'mp','Manutenção Corretiva':'mc','Inoperante':'i','Reserva':'d'};
-  const colors={d:'bg-nv-1',op:'bg-pmes-300',mp:'bg-nv-2',mc:'bg-nv-3',i:'bg-nv-4'};
-  const modNome=id=>(MODALIDADES.find(m=>m.id===id)||{}).nome||id;
-  const inOps=new Set();OPERACOES.filter(o=>o.st==='Em Andamento').forEach(o=>o.vtrs.forEach(v=>inOps.add(v)));
-  const grid=VTR.map(v=>{
-    const base=statusMap[v.status]||'d';
-    const days=Array(7).fill(base);
-    if(inOps.has(v.pref)&&base==='d'){days[0]='op';days[1]='op';days[2]='op'}
-    if(base==='mp'){days[3]='d';days[4]='d';days[5]='d';days[6]='d'}
-    return{pref:v.pref,mod:modNome(v.mod),days};
-  });
-  document.getElementById('tbDisp').innerHTML=grid.map(g=>`<tr class="hover:bg-gray-50"><td class="px-4 py-2"><span class="font-semibold text-pmes-400 text-sm">${g.pref}</span></td><td class="px-3 py-2 text-xs text-gray-500">${g.mod}</td>${g.days.map(d=>`<td class="px-2 py-2 text-center"><div class="w-5 h-5 ${colors[d]} rounded mx-auto"></div></td>`).join('')}</tr>`).join('');
-  const opCount=VTR.filter(v=>v.status==='Operacional').length;
-  const inOpCount=inOps.size;
+  const opCount=nv.op;
   const manCount=VTR.filter(v=>v.status.includes('Manutenção')).length;
   const inopCount=VTR.filter(v=>v.status==='Inoperante').length;
-  document.getElementById('dispHoje').textContent=opCount-inOpCount;
-  document.getElementById('dispOp').textContent=inOpCount;
-  document.getElementById('dispMan').textContent=manCount;
-  document.getElementById('dispInop').textContent=inopCount;
-}
-
-// ========== OPERAÇÕES ==========
-function renderOps(){
-  document.getElementById('cardsOps').innerHTML=OPERACOES.map(op=>{const sc=op.st==='Em Andamento'?'border-nv-1':'border-pmes-300';const sb=op.st==='Em Andamento'?'bg-green-100 text-green-700':'bg-blue-100 text-blue-700';return`<div class="bg-white rounded-xl shadow-sm p-5 border-l-4 ${sc} card-h"><div class="flex justify-between items-start mb-3"><h4 class="font-bold text-pmes-400">${op.nome}</h4><span class="px-2 py-0.5 rounded-full text-xs font-medium ${sb}">${op.st}</span></div><p class="text-sm text-gray-600 mb-3">${op.desc}</p><div class="text-xs text-gray-500 mb-3"><i class="far fa-calendar mr-1"></i>${fmtD(op.inicio)} a ${fmtD(op.fim)}</div><div class="flex flex-wrap gap-1">${op.vtrs.map(v=>`<span class="px-2 py-0.5 bg-pmes-50 text-pmes-400 rounded text-xs font-medium">${v}</span>`).join('')}</div></div>`}).join('');
-}
-
-// ========== SOLICITAÇÕES ==========
-function renderSolic(){
-  const sc={'Aprovada':'bg-green-100 text-green-700','Pendente':'bg-amber-100 text-amber-700','Negada':'bg-red-100 text-red-700'};
-  document.getElementById('tbSolic').innerHTML=SOLICITACOES.map(s=>`<tr class="hover:bg-gray-50"><td class="px-4 py-3 font-semibold text-pmes-400">${s.id}</td><td class="px-4 py-3">${s.pel}</td><td class="px-4 py-3 text-gray-600">${s.fin}</td><td class="px-4 py-3 text-gray-500">${fmtD(s.data)}</td><td class="px-4 py-3 text-center font-medium">${s.qtd}</td><td class="px-4 py-3 text-center"><span class="px-2 py-0.5 rounded-full text-xs font-medium ${sc[s.st]}">${s.st}</span></td><td class="px-4 py-3 text-center">${s.st==='Pendente'?'<button class="text-green-500 hover:text-green-700 mx-1" title="Aprovar"><i class="fas fa-check"></i></button><button class="text-red-400 hover:text-red-600 mx-1" title="Negar"><i class="fas fa-times"></i></button>':'<span class="text-xs text-gray-400">—</span>'}</td></tr>`).join('');
-}
-
-// ========== ALOCAÇÕES ==========
-function renderAloc(){
+  document.getElementById('opNivelBanner').className=`rounded-xl p-6 mb-6 border-3 ${nv.borda} bg-white`;
+  document.getElementById('opNivelBanner').innerHTML=`
+    <div class="flex flex-wrap items-center gap-6 mb-4">
+      <div class="w-24 h-24 ${nv.cor} rounded-2xl flex items-center justify-center text-white font-bold text-4xl shadow-lg">${nv.n}</div>
+      <div class="flex-1">
+        <p class="text-xs text-gray-400 uppercase tracking-widest mb-1">Nível de Disponibilidade Atual</p>
+        <h2 class="text-3xl font-bold text-pmes-400">${nv.nome}</h2>
+        <p class="text-sm text-gray-600 mt-2">${nv.txt}</p>
+        <div class="flex flex-wrap items-center gap-4 mt-3">
+          <span class="text-sm text-pmes-400 font-medium"><i class="fas fa-truck mr-1"></i>${opCount} VTR operacionais</span>
+          <span class="text-sm text-gray-400">de ${VTR.length} no efetivo</span>
+          <span class="text-xs text-gray-400">| Ref. NP: ≥34 para N1</span>
+        </div>
+      </div>
+    </div>
+    <div class="bg-gray-50 rounded-lg p-3 text-xs text-gray-500">
+      <i class="fas fa-info-circle text-pmes-300 mr-1"></i>
+      Esta seção é de <strong>consulta</strong>. Para alterações na frota, manutenção ou ISV, acesse o menu <strong>P4 — Logística</strong>.
+    </div>`;
+  document.getElementById('opVtrOp').textContent=opCount;
+  document.getElementById('opVtrMan').textContent=manCount;
+  document.getElementById('opVtrInop').textContent=inopCount;
+  document.getElementById('opVtrTotal').textContent=VTR.length;
   const groups={};
-  VTR.forEach(v=>{if(!groups[v.mod])groups[v.mod]=[];groups[v.mod].push(v)});
-  const modNome=id=>(MODALIDADES.find(m=>m.id===id)||{}).nome||id;
-  const cols=['border-blue-500','border-green-500','border-purple-500','border-amber-500','border-red-500','border-cyan-500','border-pink-500','border-indigo-500','border-teal-500'];
-  let i=0;
-  document.getElementById('cardsAloc').innerHTML=Object.entries(groups).map(([mod,vtrs])=>{
-    const c=cols[i%cols.length];i++;
-    return`<div class="bg-white rounded-xl shadow-sm p-5 border-l-4 ${c} card-h"><div class="flex justify-between items-center mb-3"><h4 class="font-bold text-pmes-400 text-sm">${modNome(mod)}</h4><span class="text-xs text-gray-400">${vtrs.length} VTR</span></div><div class="flex flex-wrap gap-1.5">${vtrs.map(v=>{const stDot=v.status==='Operacional'?'bg-green-400':v.status.includes('Manutenção')?'bg-amber-400':v.status==='Inoperante'?'bg-red-400':'bg-blue-400';return`<span class="flex items-center gap-1 px-2 py-1 bg-gray-50 rounded text-xs"><span class="w-2 h-2 rounded-full ${stDot}"></span>${v.pref}</span>`}).join('')}</div></div>`;
+  VTR.forEach(v=>{if(!groups[v.mod])groups[v.mod]={total:0,op:0,man:0,inop:0};groups[v.mod].total++;if(v.status==='Operacional')groups[v.mod].op++;else if(v.status.includes('Manutenção'))groups[v.mod].man++;else if(v.status==='Inoperante')groups[v.mod].inop++});
+  document.getElementById('tbCondMod').innerHTML=MODALIDADES.map(m=>{
+    const g=groups[m.id]||{total:0,op:0,man:0,inop:0};
+    const minReq=m[nv.n.toLowerCase()];
+    const ok=g.op>=minReq;
+    const sit=ok?'<span class="px-2 py-0.5 rounded-full text-xs font-medium bg-green-100 text-green-700"><i class="fas fa-check mr-1"></i>Adequado</span>':'<span class="px-2 py-0.5 rounded-full text-xs font-medium bg-red-100 text-red-700"><i class="fas fa-exclamation-triangle mr-1"></i>Abaixo</span>';
+    return`<tr class="hover:bg-gray-50 ${!ok?'bg-red-50':''}"><td class="px-4 py-2 text-sm">${m.nome}</td><td class="px-4 py-2 text-center font-medium">${g.total}</td><td class="px-4 py-2 text-center font-medium text-green-600">${g.op}</td><td class="px-4 py-2 text-center font-medium text-amber-600">${g.man}</td><td class="px-4 py-2 text-center font-medium text-red-600">${g.inop}</td><td class="px-4 py-2 text-center font-bold">${minReq}</td><td class="px-4 py-2 text-center">${sit}</td></tr>`;
   }).join('');
+  document.getElementById('opNiveisCards').innerHTML=`
+    <div class="p-4 rounded-lg border-2 ${nv.n==='N1'?'border-nv-1 bg-green-50':'border-gray-200'} text-center"><p class="font-bold text-lg ${nv.n==='N1'?'text-nv-1':'text-gray-400'}">N1</p><p class="text-xs text-gray-500">≥ 34 VTR</p><p class="text-[10px] text-gray-400">Operação Plena</p></div>
+    <div class="p-4 rounded-lg border-2 ${nv.n==='N2'?'border-nv-2 bg-yellow-50':'border-gray-200'} text-center"><p class="font-bold text-lg ${nv.n==='N2'?'text-nv-2':'text-gray-400'}">N2</p><p class="text-xs text-gray-500">27–33 VTR</p><p class="text-[10px] text-gray-400">Alerta Amarelo</p></div>
+    <div class="p-4 rounded-lg border-2 ${nv.n==='N3'?'border-nv-3 bg-orange-50':'border-gray-200'} text-center"><p class="font-bold text-lg ${nv.n==='N3'?'text-nv-3':'text-gray-400'}">N3</p><p class="text-xs text-gray-500">19–26 VTR</p><p class="text-[10px] text-gray-400">Alerta Laranja</p></div>
+    <div class="p-4 rounded-lg border-2 ${nv.n==='N4'?'border-nv-4 bg-red-50':'border-gray-200'} text-center"><p class="font-bold text-lg ${nv.n==='N4'?'text-nv-4':'text-gray-400'}">N4</p><p class="text-xs text-gray-500">&lt; 19 VTR</p><p class="text-[10px] text-gray-400">Contingência Crítica</p></div>`;
+  document.getElementById('tbMinBody').innerHTML=MODALIDADES.map(m=>`<tr class="hover:bg-gray-50"><td class="px-4 py-2 text-sm">${m.nome}</td><td class="px-4 py-2 text-center font-medium">${m.n1}</td><td class="px-4 py-2 text-center font-medium">${m.n2}</td><td class="px-4 py-2 text-center font-medium">${m.n3}</td><td class="px-4 py-2 text-center font-medium">${m.n4}</td><td class="px-4 py-2 text-xs text-gray-500">${m.obs}</td></tr>`).join('')+`<tr class="bg-pmes-50 font-bold"><td class="px-4 py-2 text-sm text-pmes-400">TOTAL</td><td class="px-4 py-2 text-center">${TOTAL_N1}</td><td class="px-4 py-2 text-center">${TOTAL_N2}</td><td class="px-4 py-2 text-center">${TOTAL_N3}</td><td class="px-4 py-2 text-center">${TOTAL_N4}</td><td class="px-4 py-2 text-xs text-gray-500">Referência orientativa</td></tr>`;
 }
 
 // ========== RELATÓRIOS ==========
@@ -721,6 +593,8 @@ document.addEventListener('DOMContentLoaded',()=>{
   // Populate modal selects
   const mdlSel=document.getElementById('mdlVtrMod');
   if(mdlSel)MODALIDADES.forEach(m=>{const o=document.createElement('option');o.value=m.id;o.textContent=m.nome;mdlSel.appendChild(o)});
+  const mdlFaixa=document.getElementById('mdlVtrFaixa');
+  if(mdlFaixa)FAIXAS_KM.forEach(f=>{const o=document.createElement('option');o.value=f.id;o.textContent=f.label+' km';mdlFaixa.appendChild(o)});
   const mdlManVtr=document.getElementById('mdlManVtr');
   if(mdlManVtr)VTR.forEach(v=>{const o=document.createElement('option');o.value=v.pref;o.textContent=v.pref+' — '+v.modelo;mdlManVtr.appendChild(o)});
   renderDash();
