@@ -70,7 +70,7 @@ tailwind.config = {
     <p class="px-5 text-[10px] text-pmes-200 uppercase tracking-widest mt-5 mb-2"><i class="fas fa-chart-bar mr-1"></i>Relatórios</p>
     <a href="#" class="sidebar-link flex items-center gap-3 px-5 py-2.5 text-sm text-pmes-100" data-page="relatorios" onclick="nav('relatorios')"><i class="fas fa-file-lines w-5 text-center text-pmes-200"></i>Relatórios Gerais</a>
   </nav>
-  <div class="p-3 border-t border-pmes-400 text-center"><p class="text-[9px] text-pmes-200">SIGV v1.0 — NP PMES-14CIA Nº 001 — 2026</p></div>
+  <div class="p-3 border-t border-pmes-400 flex items-center justify-between"><p class="text-[9px] text-pmes-200">SIGV v1.1 — NP Nº 001 — 2026</p><button onclick="abrirConfig()" class="text-pmes-200 hover:text-white" title="Configurações Google Sheets"><i class="fas fa-cog text-xs"></i></button></div>
 </aside>
 
 <!-- MOBILE TOGGLE -->
@@ -82,6 +82,7 @@ tailwind.config = {
     <div><h2 class="text-lg font-bold text-pmes-400" id="pageTitle">Painel Geral</h2><p class="text-xs text-gray-400" id="pageSub">NP PMES-14CIA Nº 001 — Visão geral da frota e operações</p></div>
     <div class="flex items-center gap-4">
       <span class="text-xs text-gray-400" id="headerDate"></span>
+      <div id="syncIndicator" class="w-2.5 h-2.5 rounded-full bg-gray-300 cursor-pointer" title="Sheets não configurado" onclick="abrirConfig()"></div>
       <div id="nivelBadgeHeader" class="px-3 py-1 rounded-full text-xs font-bold text-white bg-nv-1">N1</div>
     </div>
   </header>
@@ -272,6 +273,31 @@ tailwind.config = {
 </div>
 
 
+<div id="mdlConfig" class="fixed inset-0 z-50 hidden items-center justify-center modal-bg">
+  <div class="bg-white rounded-2xl shadow-2xl w-full max-w-lg mx-4">
+    <div class="flex items-center justify-between p-5 border-b"><h3 class="font-bold text-pmes-400"><i class="fas fa-cog mr-2"></i>Google Sheets — Configuração</h3><button onclick="closeModal('mdlConfig')" class="text-gray-400 hover:text-gray-600"><i class="fas fa-times"></i></button></div>
+    <div class="p-5 space-y-4">
+      <div>
+        <label class="text-xs font-medium text-gray-600">URL do Web App (Apps Script)</label>
+        <input type="text" id="cfgSheetsUrl" class="w-full border rounded-lg px-3 py-2 text-sm mt-1 font-mono" placeholder="https://script.google.com/macros/s/.../exec">
+        <p class="text-[10px] text-gray-400 mt-1">Cole a URL gerada ao implantar o Apps Script como Web App na planilha.</p>
+      </div>
+      <div class="flex flex-wrap gap-2">
+        <button onclick="testConnection()" class="px-3 py-2 text-xs bg-green-600 text-white rounded-lg hover:bg-green-700"><i class="fas fa-plug mr-1"></i>Testar Conexão</button>
+        <button onclick="syncToSheets()" class="px-3 py-2 text-xs bg-blue-600 text-white rounded-lg hover:bg-blue-700"><i class="fas fa-upload mr-1"></i>Enviar p/ Planilha</button>
+        <button onclick="syncFromSheets()" class="px-3 py-2 text-xs bg-purple-600 text-white rounded-lg hover:bg-purple-700"><i class="fas fa-download mr-1"></i>Baixar da Planilha</button>
+      </div>
+      <div id="cfgStatus" class="text-sm min-h-[24px]"></div>
+      <div class="bg-gray-50 rounded-lg p-3 text-[10px] text-gray-500 space-y-1">
+        <p><strong>Planilha:</strong> ID 1kPxHyUi...ND61c</p>
+        <p><strong>Aba:</strong> "Frota" (criada automaticamente)</p>
+        <p><strong>Colunas:</strong> Prefixo | Modalidade | Modelo | Placa | Ano | Km | CustoMan | Status</p>
+      </div>
+    </div>
+    <div class="p-5 border-t flex justify-end gap-3"><button onclick="closeModal('mdlConfig')" class="px-4 py-2 text-sm text-gray-600 border rounded-lg hover:bg-gray-50">Fechar</button><button onclick="saveConfig()" class="px-4 py-2 text-sm bg-pmes-400 text-white rounded-lg hover:bg-pmes-300"><i class="fas fa-save mr-1"></i>Salvar URL</button></div>
+  </div>
+</div>
+
 <!-- ===== JAVASCRIPT ===== -->
 <script>
 // ========== DADOS DA NP ==========
@@ -337,10 +363,67 @@ const VTR_DEFAULT = [
   {pref:'VTR-034',mod:'RES',  modelo:'Hilux CD',      placa:'QRI-6F34',ano:2024,km:9500,  custoMan:300,  status:'Operacional'},
 ];
 
-// ========== PERSISTÊNCIA (localStorage) ==========
+// ========== PERSISTÊNCIA (localStorage + Google Sheets) ==========
 function saveVTR(){localStorage.setItem('sigv_vtr',JSON.stringify(VTR))}
 function loadVTR(){try{const s=localStorage.getItem('sigv_vtr');return s?JSON.parse(s):null}catch(e){return null}}
 let VTR=loadVTR()||VTR_DEFAULT.map(v=>({...v}));
+let SHEETS_URL=localStorage.getItem('sigv_sheets_url')||'';
+
+// ========== GOOGLE SHEETS SYNC ==========
+function setSyncStatus(st){
+  const el=document.getElementById('syncIndicator');if(!el)return;
+  const m={ok:['bg-green-400','Sincronizado com Sheets'],syncing:['bg-yellow-400 animate-pulse','Sincronizando...'],error:['bg-red-400','Erro de sincronização'],off:['bg-gray-300','Sheets não configurado']};
+  const[cls,title]=m[st]||m.off;el.className='w-2.5 h-2.5 rounded-full cursor-pointer '+cls;el.title=title;
+}
+async function sheetsGet(){
+  if(!SHEETS_URL)return null;setSyncStatus('syncing');
+  try{const r=await fetch(SHEETS_URL);const d=await r.json();setSyncStatus('ok');return d}
+  catch(e){console.warn('Sheets GET:',e);setSyncStatus('error');return null}
+}
+async function sheetsPost(payload){
+  if(!SHEETS_URL)return null;setSyncStatus('syncing');
+  try{const r=await fetch(SHEETS_URL,{method:'POST',headers:{'Content-Type':'text/plain;charset=utf-8'},body:JSON.stringify(payload),redirect:'follow'});const d=await r.json();setSyncStatus('ok');return d}
+  catch(e){console.warn('Sheets POST:',e);setSyncStatus('error');return null}
+}
+async function syncFromSheets(){
+  const el=document.getElementById('cfgStatus');
+  if(el)el.innerHTML='<span class="text-blue-600"><i class="fas fa-spinner fa-spin mr-1"></i>Baixando dados...</span>';
+  const data=await sheetsGet();
+  if(data&&Array.isArray(data)&&data.length>0){
+    VTR.length=0;data.forEach(v=>VTR.push(v));saveVTR();renderDash();
+    if(el)el.innerHTML='<span class="text-green-600"><i class="fas fa-check mr-1"></i>'+data.length+' viaturas carregadas da planilha.</span>';
+  }else if(data&&Array.isArray(data)){
+    if(el)el.innerHTML='<span class="text-amber-600"><i class="fas fa-info-circle mr-1"></i>Planilha vazia. Use "Enviar p/ Planilha" para popular.</span>';
+  }else{
+    if(el)el.innerHTML='<span class="text-red-600"><i class="fas fa-times mr-1"></i>Falha ao conectar.</span>';
+  }
+}
+async function syncToSheets(){
+  const el=document.getElementById('cfgStatus');
+  if(el)el.innerHTML='<span class="text-blue-600"><i class="fas fa-spinner fa-spin mr-1"></i>Enviando dados...</span>';
+  const res=await sheetsPost({action:'saveAll',vtrs:VTR});
+  if(res&&res.ok){if(el)el.innerHTML='<span class="text-green-600"><i class="fas fa-check mr-1"></i>'+VTR.length+' viaturas enviadas para a planilha.</span>'}
+  else{if(el)el.innerHTML='<span class="text-red-600"><i class="fas fa-times mr-1"></i>Erro ao enviar.</span>'}
+}
+async function testConnection(){
+  const url=document.getElementById('cfgSheetsUrl').value.trim();
+  const el=document.getElementById('cfgStatus');
+  if(!url){el.innerHTML='<span class="text-red-600">Informe a URL do Web App.</span>';return}
+  SHEETS_URL=url;
+  el.innerHTML='<span class="text-blue-600"><i class="fas fa-spinner fa-spin mr-1"></i>Testando...</span>';
+  const data=await sheetsGet();
+  if(data!==null)el.innerHTML='<span class="text-green-600"><i class="fas fa-check-circle mr-1"></i>Conexão OK!'+(Array.isArray(data)?' '+data.length+' viaturas na planilha.':'')+'</span>';
+  else el.innerHTML='<span class="text-red-600"><i class="fas fa-times-circle mr-1"></i>Falha. Verifique a URL e permissões do Web App.</span>';
+}
+function saveConfig(){
+  const url=document.getElementById('cfgSheetsUrl').value.trim();
+  SHEETS_URL=url;localStorage.setItem('sigv_sheets_url',url);
+  setSyncStatus(url?'ok':'off');closeModal('mdlConfig');
+}
+function abrirConfig(){
+  const el=document.getElementById('cfgSheetsUrl');if(el)el.value=SHEETS_URL;
+  document.getElementById('cfgStatus').innerHTML='';openModal('mdlConfig');
+}
 
 function abrirNovaViatura(){
   document.getElementById('mdlVtrEditPref').value='';
@@ -394,7 +477,9 @@ function salvarViatura(){
     if(VTR.find(v=>v.pref===pref)){alert('Prefixo "'+pref+'" já cadastrado.');return}
     VTR.push({pref,mod,modelo,placa,ano,km,custoMan,status});
   }
+  const savedVtr=editPref?VTR.find(v=>v.pref===editPref):VTR.find(v=>v.pref===pref);
   saveVTR();closeModal('mdlViatura');renderFrota();refreshSelects();
+  if(SHEETS_URL&&savedVtr)sheetsPost({action:'save',vtr:savedVtr});
 }
 
 function excluirViatura(pref){
@@ -402,12 +487,14 @@ function excluirViatura(pref){
   const idx=VTR.findIndex(v=>v.pref===pref);
   if(idx>=0)VTR.splice(idx,1);
   saveVTR();renderFrota();refreshSelects();
+  if(SHEETS_URL)sheetsPost({action:'delete',pref});
 }
 
 function resetVTR(){
   if(!confirm('Restaurar frota para os dados iniciais padrão (34 VTR)?\nTodos os dados atuais serão substituídos.'))return;
   VTR.length=0;VTR_DEFAULT.forEach(v=>VTR.push({...v}));
   saveVTR();renderFrota();refreshSelects();
+  if(SHEETS_URL)sheetsPost({action:'saveAll',vtrs:VTR});
 }
 
 function refreshSelects(){
@@ -682,6 +769,7 @@ document.addEventListener('DOMContentLoaded',()=>{
   const mdlManVtr=document.getElementById('mdlManVtr');
   if(mdlManVtr)VTR.forEach(v=>{const o=document.createElement('option');o.value=v.pref;o.textContent=v.pref+' — '+v.modelo;mdlManVtr.appendChild(o)});
   renderDash();
+  if(SHEETS_URL){setSyncStatus('syncing');sheetsGet().then(data=>{if(data&&Array.isArray(data)&&data.length>0){VTR.length=0;data.forEach(v=>VTR.push(v));saveVTR();renderDash()}})}else{setSyncStatus('off')}
 });
 </script>
 </body>
