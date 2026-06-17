@@ -1,0 +1,422 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Anexo I — Fluxograma BPMN | NP PMES-14CIA Nº 001</title>
+<style>
+  :root {
+    --azul-pmes:   #1A3A6B;
+    --azul-medio:  #2E5FA3;
+    --azul-claro:  #D9E2F3;
+    --azul-linha:  #EEF2FA;
+    --amarelo:     #D4930A;
+    --laranja:     #C05A10;
+    --vermelho:    #B03020;
+    --verde:       #1A6B35;
+    --borda:       #A0B4D0;
+    --branco:      #FFFFFF;
+    --texto:       #1A1A2E;
+    --fonte:       'Arial', sans-serif;
+  }
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body { font-family: var(--fonte); background: #EDF1F9; color: var(--texto); padding: 20px 14px 48px; }
+
+  /* ── CABEÇALHO ── */
+  .cabecalho {
+    background: var(--azul-pmes); color: white;
+    border-radius: 6px 6px 0 0; padding: 16px 24px 12px;
+    display: flex; align-items: center; gap: 16px;
+    max-width: 1300px; margin: 0 auto;
+  }
+  .escudo { width: 48px; height: 48px; background: white; border-radius: 50%;
+    display: flex; align-items: center; justify-content: center; font-size: 20px; flex-shrink: 0; }
+  .cab-txt h1 { font-size: 11px; font-weight: 400; letter-spacing: .08em; opacity: .8; text-transform: uppercase; }
+  .cab-txt h2 { font-size: 16px; font-weight: 700; margin-top: 2px; }
+  .cab-txt p  { font-size: 10px; opacity: .65; margin-top: 2px; }
+
+  .meta-bar { max-width: 1300px; margin: 0 auto; background: var(--azul-medio);
+    display: flex; font-size: 11px; color: white; flex-wrap: wrap; }
+  .meta-item { padding: 5px 16px; border-right: 1px solid rgba(255,255,255,.2); }
+  .meta-item span { opacity: .7; display: block; font-size: 10px; }
+
+  /* ── LEGENDAS ── */
+  .niveis-strip { max-width: 1300px; margin: 12px auto 0; display: flex; gap: 8px; flex-wrap: wrap; }
+  .nivel-badge { display: flex; align-items: center; gap: 8px; background: white;
+    border-radius: 5px; padding: 6px 14px; border: 1.5px solid var(--borda);
+    font-size: 12px; flex: 1; min-width: 190px; }
+  .dot { width: 13px; height: 13px; border-radius: 50%; flex-shrink: 0; }
+  .c-verde   { background: var(--verde); }
+  .c-amarelo { background: var(--amarelo); }
+  .c-laranja { background: var(--laranja); }
+  .c-vermelho{ background: var(--vermelho); }
+
+  .legenda { max-width: 1300px; margin: 8px auto 14px;
+    display: flex; gap: 14px; flex-wrap: wrap; align-items: center; font-size: 11px; color: #444; }
+  .leg-item { display: flex; align-items: center; gap: 6px; }
+
+  /* ── DIAGRAMA ── */
+  .diagrama-wrapper { max-width: 1300px; margin: 0 auto; overflow-x: auto;
+    border: 2px solid var(--azul-pmes); border-radius: 0 0 6px 6px; background: white; }
+  .diagrama { display: grid; grid-template-columns: 120px 1fr; min-width: 920px; }
+
+  .raia-label { background: var(--azul-pmes); color: white;
+    writing-mode: vertical-rl; transform: rotate(180deg);
+    text-align: center; font-size: 11px; font-weight: 700; letter-spacing: .1em;
+    padding: 14px 6px; text-transform: uppercase;
+    border-bottom: 1px solid rgba(255,255,255,.15);
+    display: flex; align-items: center; justify-content: center; }
+  .raia-label.r-p3  { background: #174E8C; }
+  .raia-label.r-ct  { background: #1E4A80; }
+  .raia-label.r-cmt { background: #0F2E5C; }
+
+  .raia-body { padding: 18px 22px; border-bottom: 1px solid #D0DAEA; }
+  .raia-body.alt { background: var(--azul-linha); }
+
+  /* ── FLUXO ── */
+  .fluxo-col { display: flex; flex-direction: column; gap: 10px; }
+  .fluxo-row { display: flex; align-items: center; gap: 0; flex-wrap: wrap; }
+
+  .seta { width: 28px; height: 2px; background: var(--borda);
+    position: relative; flex-shrink: 0; align-self: center; }
+  .seta::after { content: ''; position: absolute; right: -1px; top: -4px;
+    border: 5px solid transparent; border-left-color: var(--borda); }
+
+  /* ── FORMAS BPMN ── */
+  .ev-start { width: 34px; height: 34px; border-radius: 50%;
+    background: var(--verde); border: 3px solid #0F4520;
+    flex-shrink: 0; align-self: center; }
+  .ev-start.alt { background: #1A6B3A; }
+  .ev-end   { width: 34px; height: 34px; border-radius: 50%;
+    background: var(--vermelho); border: 5px solid #7A1010;
+    flex-shrink: 0; align-self: center; }
+
+  .task { background: white; border: 2px solid var(--azul-medio); border-radius: 7px;
+    padding: 9px 13px; font-size: 11px; text-align: center;
+    min-width: 108px; max-width: 148px; line-height: 1.35;
+    flex-shrink: 0; box-shadow: 0 2px 5px rgba(26,58,107,.09); }
+  .task .tn { font-size: 9px; color: var(--azul-medio); font-weight: 700;
+    text-transform: uppercase; letter-spacing: .05em; display: block; margin-bottom: 3px; }
+  .task.dest { border-color: var(--azul-pmes); background: var(--azul-claro); }
+  .task.t-am  { border-color: var(--amarelo); background: #FFF8E0; }
+  .task.t-or  { border-color: var(--laranja); background: #FFF0E5; }
+  .task.t-vm  { border-color: var(--vermelho); background: #FDECEA; }
+  .task.t-vd  { border-color: var(--verde); background: #E8F5EC; }
+
+  .gw { width: 48px; height: 48px; background: white;
+    border: 2.5px solid var(--azul-medio); transform: rotate(45deg);
+    flex-shrink: 0; align-self: center; position: relative; }
+  .gw .gl { position: absolute; top: 50%; left: 50%;
+    transform: translate(-50%,-50%) rotate(-45deg);
+    font-size: 17px; font-weight: 900; color: var(--azul-medio); line-height: 1; }
+  .gw.excl { border-color: var(--azul-pmes); }
+  .gw.excl .gl { color: var(--azul-pmes); }
+
+  .nota { font-size: 10px; color: #555; background: #FFFCE6;
+    border-left: 3px solid var(--amarelo); padding: 5px 9px;
+    border-radius: 0 4px 4px 0; max-width: 170px; line-height: 1.4;
+    align-self: flex-start; margin-left: 8px; flex-shrink: 0; }
+
+  /* ── SEÇÃO EXTRA ── */
+  .secao { max-width: 1300px; margin: 18px auto 0; background: white;
+    border-radius: 6px; border: 1.5px solid var(--borda); padding: 18px 24px; }
+  .secao h3 { font-size: 12px; color: var(--azul-pmes); text-transform: uppercase;
+    letter-spacing: .08em; border-bottom: 2px solid var(--azul-pmes);
+    padding-bottom: 5px; margin-bottom: 12px; }
+
+  /* ── TABELAS ── */
+  table { width: 100%; border-collapse: collapse; font-size: 11.5px; }
+  th { background: var(--azul-pmes); color: white; padding: 7px 10px; text-align: center; font-size: 11px; }
+  th:first-child { text-align: left; }
+  td { border: 1px solid #C5D5E8; padding: 6px 10px; vertical-align: middle; text-align: center; }
+  td:first-child { text-align: left; }
+  tr:nth-child(even) td { background: var(--azul-linha); }
+  .tr-total td { background: var(--azul-claro) !important; font-weight: 700; color: var(--azul-pmes); }
+
+  .badge { display: inline-block; padding: 2px 9px; border-radius: 11px;
+    font-weight: 700; font-size: 11px; color: white; }
+  .b-n1 { background: var(--verde); }
+  .b-n2 { background: var(--amarelo); }
+  .b-n3 { background: var(--laranja); }
+  .b-n4 { background: var(--vermelho); }
+
+  /* ── CARTÕES PROGRAMA ── */
+  .cartoes-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(260px, 1fr)); gap: 14px; margin-top: 6px; }
+  .cartao { border-radius: 7px; padding: 14px 16px; border: 2px solid; }
+  .cartao h4 { font-size: 12px; font-weight: 700; text-transform: uppercase; letter-spacing: .05em; margin-bottom: 8px; }
+  .cartao p  { font-size: 11px; line-height: 1.5; color: #333; }
+  .cartao ul { font-size: 11px; line-height: 1.6; color: #333; padding-left: 16px; margin-top: 6px; }
+  .cartao.n2 { border-color: var(--amarelo); background: #FFFBE8; }
+  .cartao.n2 h4 { color: var(--amarelo); }
+  .cartao.n3 { border-color: var(--laranja); background: #FFF3EB; }
+  .cartao.n3 h4 { color: var(--laranja); }
+  .cartao.n4 { border-color: var(--vermelho); background: #FEF0EF; }
+  .cartao.n4 h4 { color: var(--vermelho); }
+  .cartao.pb { border-color: var(--azul-medio); background: var(--azul-linha); }
+  .cartao.pb h4 { color: var(--azul-pmes); }
+  .pendente { font-size: 10.5px; color: #888; background: #F5F5F5;
+    border: 1px dashed #AAAAAA; border-radius: 4px; padding: 5px 10px;
+    margin-top: 8px; display: inline-block; }
+
+  /* ── RODAPÉ ── */
+  .rodape { max-width: 1300px; margin: 14px auto 0;
+    display: flex; justify-content: space-between; flex-wrap: wrap; gap: 6px;
+    font-size: 10px; color: #888; border-top: 1px solid #C5D5E8; padding-top: 8px; }
+
+  @media print { body { background: white; padding: 0; } }
+</style>
+</head>
+<body>
+
+<!-- CABEÇALHO -->
+<div class="cabecalho">
+  <div class="escudo">🛡️</div>
+  <div class="cab-txt">
+    <h1>Governo do Estado do Espírito Santo — Polícia Militar — 14ª Companhia Independente</h1>
+    <h2>ANEXO I — Fluxograma BPMN em Diagrama de Raias</h2>
+    <p>NP PMES-14CIA Nº 001 &nbsp;|&nbsp; Gestão da Disponibilidade de Frota e Empenhamento Operacional — Fluxo P4/P3 &nbsp;|&nbsp; Versão 1 &nbsp;|&nbsp; 2026</p>
+  </div>
+</div>
+
+<div class="meta-bar">
+  <div class="meta-item"><span>Norma</span>NP PMES-14CIA Nº 001</div>
+  <div class="meta-item"><span>Tipo</span>NP Exclusiva — SCI 001/2017</div>
+  <div class="meta-item"><span>Emitente</span>14ª Cia Ind / PMES</div>
+  <div class="meta-item"><span>Notação</span>BPMN 2.0 — Diagrama de Raias</div>
+  <div class="meta-item"><span>Frota de Referência</span>34 VTR (28 fixas + 6 reserva)</div>
+  <div class="meta-item"><span>Versão</span>1.0 — 2026</div>
+</div>
+
+<!-- LEGENDA NÍVEIS -->
+<div class="niveis-strip">
+  <div class="nivel-badge"><div class="dot c-verde"></div><strong>N1</strong>&nbsp;Operação Plena (≥ 34 VTR)</div>
+  <div class="nivel-badge"><div class="dot c-amarelo"></div><strong>N2</strong>&nbsp;Alerta Amarelo (27–33 VTR)</div>
+  <div class="nivel-badge"><div class="dot c-laranja"></div><strong>N3</strong>&nbsp;Alerta Laranja (19–26 VTR)</div>
+  <div class="nivel-badge"><div class="dot c-vermelho"></div><strong>N4</strong>&nbsp;Contingência Crítica (&lt; 19 VTR)</div>
+</div>
+
+<!-- LEGENDA SÍMBOLOS -->
+<div class="legenda">
+  <strong style="color:var(--azul-pmes);font-size:11px;">Legenda BPMN:</strong>
+  <div class="leg-item"><svg width="18" height="18"><circle cx="9" cy="9" r="8" fill="#1A6B35" stroke="#0F4520" stroke-width="2"/></svg>Evento de Início</div>
+  <div class="leg-item"><svg width="18" height="18"><circle cx="9" cy="9" r="7" fill="#B03020" stroke="#7A1010" stroke-width="4"/></svg>Evento de Fim</div>
+  <div class="leg-item"><svg width="22" height="18"><rect x="1" y="3" width="20" height="12" rx="3" fill="white" stroke="#2E5FA3" stroke-width="2"/></svg>Tarefa</div>
+  <div class="leg-item"><svg width="18" height="18"><polygon points="9,1 17,9 9,17 1,9" fill="white" stroke="#1A3A6B" stroke-width="2"/></svg>Gateway Exclusivo</div>
+  <div class="leg-item"><svg width="32" height="10"><line x1="0" y1="5" x2="26" y2="5" stroke="#A0B4D0" stroke-width="2"/><polygon points="26,1 32,5 26,9" fill="#A0B4D0"/></svg>Fluxo de Sequência</div>
+</div>
+
+<!-- DIAGRAMA DE RAIAS -->
+<div class="diagrama-wrapper">
+  <div class="diagrama">
+
+    <!-- ══ RAIA P4 ══ -->
+    <div class="raia-label">P4 — Logística e Materiais</div>
+    <div class="raia-body">
+      <div class="fluxo-col">
+
+        <!-- Linha A: alteração de status -->
+        <div class="fluxo-row">
+          <div class="ev-start" title="Início: alteração de status de viatura"></div>
+          <div class="seta"></div>
+          <div class="task dest"><span class="tn">P4-01</span>Detectar alteração de status de viatura</div>
+          <div class="seta"></div>
+          <div class="task"><span class="tn">P4-02</span>Classificar novo status<br><em style="font-size:10px;">(Operacional / Man.Corretiva / Man.Preventiva / Reserva)</em></div>
+          <div class="seta"></div>
+          <div class="task dest"><span class="tn">P4-03</span>Lançar no Sistema de Acompanhamento de Frota<br><em style="font-size:10px;">(data, hora, previsão de retorno)</em></div>
+          <div class="seta"></div>
+          <div class="gw excl"><div class="gl">✕</div></div>
+          <div style="font-size:10px;color:#555;align-self:center;margin-left:7px;line-height:1.3;">Mudança<br>de nível?</div>
+        </div>
+        <div style="display:flex;gap:12px;margin-left:330px;">
+          <div class="nota"><strong>SIM →</strong> Notificar P3 imediatamente (sistema + mensageria como alerta)</div>
+          <div class="nota"><strong>NÃO →</strong> Apenas registro; P3 consulta na troca de turno</div>
+        </div>
+
+        <!-- Linha B: troca de turno -->
+        <div class="fluxo-row" style="margin-top:6px;">
+          <div class="ev-start alt" title="Início: troca de turno"></div>
+          <div class="seta"></div>
+          <div class="task dest"><span class="tn">P4-04</span>Confirmar status integral da frota no início do turno</div>
+          <div class="seta"></div>
+          <div class="task"><span class="tn">P4-05</span>Totalizar VTR operacionais disponíveis</div>
+          <div class="seta"></div>
+          <div class="task dest"><span class="tn">P4-06</span>Disponibilizar total à P3 via sistema<br><em style="font-size:10px;">(registro com hora)</em></div>
+        </div>
+
+      </div>
+    </div>
+
+    <!-- ══ RAIA P3 ══ -->
+    <div class="raia-label r-p3">P3 — Operações e Emprego</div>
+    <div class="raia-body alt">
+      <div class="fluxo-col">
+
+        <!-- Linha A: receber e classificar nível -->
+        <div class="fluxo-row">
+          <div class="task dest"><span class="tn">P3-01</span>Receber atualização do Sistema de Frota (P4)</div>
+          <div class="seta"></div>
+          <div class="task"><span class="tn">P3-02</span>Apurar total de VTR operacionais disponíveis</div>
+          <div class="seta"></div>
+          <div class="gw excl"><div class="gl">✕</div></div>
+          <div style="font-size:10px;color:#555;align-self:center;margin-left:7px;line-height:1.3;max-width:110px;">Classificar<br>Nível (N1–N4)</div>
+        </div>
+
+        <!-- Linha B: ramificação por nível -->
+        <div style="display:flex;gap:10px;flex-wrap:wrap;margin-top:4px;">
+          <div class="task t-vd"><span class="tn" style="color:var(--verde);">N1 — ≥ 34 VTR</span>Escala mensal integral; operações eventuais conforme planejamento</div>
+          <div class="task t-am"><span class="tn" style="color:var(--amarelo);">N2 — 27 a 33 VTR</span>Suspender operações eventuais; manter mínimos; informar Comando</div>
+          <div class="task t-or"><span class="tn" style="color:var(--laranja);">N3 — 19 a 26 VTR</span>Reduzir operações a 2 VTR; excedente a pé e Sprinter; compressão territorial</div>
+          <div class="task t-vm"><span class="tn" style="color:var(--vermelho);">N4 — &lt; 19 VTR</span>Apenas RO e mínimos absolutos; revisão imediata; acionar Comando</div>
+        </div>
+
+        <!-- Linha C: ajuste da escala -->
+        <div class="fluxo-row" style="margin-top:4px;">
+          <div class="task dest"><span class="tn">P3-03</span>Ajustar escala diária conforme nível apurado</div>
+          <div class="seta"></div>
+          <div class="gw excl"><div class="gl">✕</div></div>
+          <div style="font-size:10px;color:#555;align-self:center;margin-left:7px;line-height:1.3;max-width:100px;">N4 ou<br>impossibil.?</div>
+          <div class="seta"></div>
+          <div class="task"><span class="tn">P3-04</span>Registrar ajuste no sistema e publicar escala definitiva</div>
+          <div class="seta"></div>
+          <div class="ev-end" title="Fim: escala publicada"></div>
+        </div>
+        <div style="font-size:10.5px;color:#666;margin-top:2px;margin-left:170px;">↑ Se N4 ou impossibilidade → encaminhar ao Comando (raia abaixo)</div>
+
+      </div>
+    </div>
+
+    <!-- ══ RAIA CHEFE DE TURNO ══ -->
+    <div class="raia-label r-ct">Chefe de Turno</div>
+    <div class="raia-body">
+      <div class="fluxo-row">
+        <div class="ev-start" title="Início: início do período de serviço"></div>
+        <div class="seta"></div>
+        <div class="task"><span class="tn">CT-01</span>Verificar status da frota no sistema ao assumir o turno</div>
+        <div class="seta"></div>
+        <div class="task"><span class="tn">CT-02</span>Conferir escala ajustada pela P3 ao nível vigente</div>
+        <div class="seta"></div>
+        <div class="gw excl"><div class="gl">✕</div></div>
+        <div style="font-size:10px;color:#555;align-self:center;margin-left:7px;line-height:1.3;max-width:90px;">Alteração<br>durante<br>o turno?</div>
+        <div class="seta"></div>
+        <div class="task"><span class="tn">CT-03</span>Registrar no sistema e acionar P3<br><em style="font-size:10px;">(se mudança de nível)</em></div>
+        <div class="seta"></div>
+        <div class="ev-end"></div>
+      </div>
+    </div>
+
+    <!-- ══ RAIA COMANDO ══ -->
+    <div class="raia-label r-cmt">Comando (CMT / SubCMT)</div>
+    <div class="raia-body alt">
+      <div class="fluxo-col">
+        <div class="fluxo-row">
+          <div class="task t-vm"><span class="tn">CMT-01</span>Receber comunicação de N4 ou impossibilidade da P3</div>
+          <div class="seta"></div>
+          <div class="task dest"><span class="tn">CMT-02</span>Decidir medida extraordinária<br><em style="font-size:10px;">(redistribuição, reforço, dispensa de modalidade)</em></div>
+          <div class="seta"></div>
+          <div class="task"><span class="tn">CMT-03</span>Comunicar decisão à P3 para ajuste da escala</div>
+          <div class="seta"></div>
+          <div class="task"><span class="tn">CMT-04</span>Registrar ocorrência no Livro da Cia</div>
+          <div class="seta"></div>
+          <div class="ev-end"></div>
+        </div>
+        <div style="font-size:10.5px;color:#666;margin-top:6px;">
+          ℹ️ Ocorrências recorrentes de N3/N4 devem gerar relatório P4 → Comando para proposta de manutenção preventiva.
+        </div>
+      </div>
+    </div>
+
+  </div>
+</div>
+
+<!-- TABELA DE NÍVEIS -->
+<div class="secao">
+  <h3>Tabela de Referência — Níveis de Disponibilidade e Gatilhos de Contingenciamento</h3>
+  <p style="font-size:11px;color:#555;margin-bottom:10px;">
+    Frota de referência: <strong>34 VTR</strong> (28 de empenhamento fixo por modalidade + 6 de reserva operacional para operações eventuais). As 2 Sprinters constituem recurso de apoio autônomo, não contabilizadas neste índice.
+  </p>
+  <table>
+    <thead>
+      <tr><th>Nível</th><th>Designação</th><th>Critério — VTR Operacionais</th><th>Ação P3</th><th>Envolvimento Comando</th></tr>
+    </thead>
+    <tbody>
+      <tr><td><span class="badge b-n1">N1</span></td><td>Operação Plena</td><td>≥ 34 VTR</td><td>Escala mensal integral; operações eventuais conforme planejamento</td><td>Não obrigatório</td></tr>
+      <tr><td><span class="badge b-n2">N2</span></td><td>Alerta Amarelo</td><td>27 a 33 VTR — reserva operacional comprometida</td><td>Suspender operações eventuais; manter mínimos por modalidade</td><td>Informar; sem ação imediata</td></tr>
+      <tr><td><span class="badge b-n3">N3</span></td><td>Alerta Laranja</td><td>19 a 26 VTR — modalidades secundárias comprometidas</td><td>Reduzir operações ao mínimo de 2 VTR; excedente a pé/Sprinter; compressão territorial</td><td>Informar e aguardar orientação</td></tr>
+      <tr><td><span class="badge b-n4">N4</span></td><td>Contingência Crítica</td><td>&lt; 19 VTR — capacidade crítica</td><td>Apenas RO e mínimos absolutos; revisão imediata da escala</td><td><strong>Acionamento imediato obrigatório</strong></td></tr>
+    </tbody>
+  </table>
+</div>
+
+<!-- TABELA DE MODALIDADES -->
+<div class="secao">
+  <h3>Tabela de Mínimos Obrigatórios por Modalidade e Nível</h3>
+  <table>
+    <thead>
+      <tr>
+        <th>Modalidade</th>
+        <th><span class="badge b-n1" style="font-size:10px;">N1</span></th>
+        <th><span class="badge b-n2" style="font-size:10px;">N2</span></th>
+        <th><span class="badge b-n3" style="font-size:10px;">N3</span></th>
+        <th><span class="badge b-n4" style="font-size:10px;">N4</span></th>
+        <th>Observação</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr><td>RO — Atendimento a Ocorrências</td><td>4</td><td>4</td><td>4 *</td><td>4 *</td><td>Prioridade Zero — inegociável</td></tr>
+      <tr><td>ROR — Ronda Ostensiva</td><td>10</td><td>8</td><td>5</td><td>3</td><td>Mínimo 3 em N3/N4</td></tr>
+      <tr><td>ROR-A</td><td>3</td><td>2</td><td>1</td><td>1</td><td>Mínimo 1 em N3/N4</td></tr>
+      <tr><td>Força Tática (FT)</td><td>4</td><td>3</td><td>2</td><td>0 **</td><td>Mínimo 2 em N2/N3; excedente a pé/Sprinter em N4</td></tr>
+      <tr><td>PROERD</td><td>1</td><td>1</td><td>0</td><td>0</td><td>Suspender a partir de N3</td></tr>
+      <tr><td>Patrulha Maria da Penha</td><td>1</td><td>1</td><td>1</td><td>1</td><td>Manter em todos os níveis</td></tr>
+      <tr><td>Patrulha da Comunidade</td><td>2</td><td>1</td><td>1</td><td>0</td><td>Suspender em N4</td></tr>
+      <tr><td>Rede Comunidade Segura</td><td>3</td><td>2</td><td>1</td><td>1</td><td>Mínimo 1 em N3/N4</td></tr>
+      <tr><td>Operações eventuais (reserva)</td><td>6</td><td>0</td><td>0</td><td>0</td><td>Suspender a partir de N2; reserva redistribuída</td></tr>
+      <tr class="tr-total"><td>TOTAL DE VTR EMPENHADAS</td><td>34</td><td>22</td><td>15</td><td>10</td><td>Referência orientativa</td></tr>
+    </tbody>
+  </table>
+  <p style="font-size:10.5px;color:#555;margin-top:8px;">
+    (*) Se impossível manter 4 RO, acionar Comando imediatamente para medida extraordinária.<br>
+    (**) Em N4, efetivo da FT redistribuído para policiamento a pé nos pontos base (Anexo III) ou embarcado na Sprinter disponível.
+  </p>
+</div>
+
+<!-- CARTÕES PROGRAMA -->
+<div class="secao">
+  <h3>Cartões Programa — Restrição de Setor e Pontos Base (Anexos II e III)</h3>
+  <p style="font-size:11px;color:#444;margin-bottom:14px;">
+    Os Cartões Programa constituem instrumento de externalização do planejamento operacional em condições de escassez de recursos, convertendo em conhecimento explícito e consultável as decisões de compressão territorial e de redistribuição de efetivo que hoje dependem de determinação informal. São elaborados em documento apartado e incorporados a esta NP por aditamento.
+  </p>
+
+  <div class="cartoes-grid">
+    <div class="cartao n2">
+      <h4>📋 Cartão Programa — Restrição de Setor N2</h4>
+      <p>Define, para cada viatura/modalidade, os setores de atuação comprimidos e os itinerários prioritários a adotar quando a frota operar entre 27 e 33 VTR. Foco: suspensão das operações eventuais e redução do raio de ronda das ROR secundárias.</p>
+      <div class="pendente">📌 Anexo II — A ser elaborado e incorporado por aditamento</div>
+    </div>
+    <div class="cartao n3">
+      <h4>📋 Cartão Programa — Restrição de Setor N3</h4>
+      <p>Define setores prioritários de atuação, itinerários mínimos e áreas a suspender quando a frota operar entre 19 e 26 VTR. Compressão territorial ativa: rotas curtas, pontos sensíveis priorizados, eliminação de setores periféricos de baixa incidência.</p>
+      <div class="pendente">📌 Anexo II — A ser elaborado e incorporado por aditamento</div>
+    </div>
+    <div class="cartao n4">
+      <h4>📋 Cartão Programa — Restrição de Setor N4</h4>
+      <p>Define a atuação mínima da frota residual (&lt; 19 VTR): apenas RO e mínimos absolutos em setores de maior criticidade. Itinerários concentrados nos eixos de maior demanda de ocorrências.</p>
+      <div class="pendente">📌 Anexo II — A ser elaborado e incorporado por aditamento</div>
+    </div>
+    <div class="cartao pb">
+      <h4>📍 Cartão Programa — Pontos Base (N3 e N4)</h4>
+      <p>Define as localizações geográficas predefinidas para concentração de efetivo em policiamento a pé ou estacionário nos níveis N3 e N4, com critérios de ocupação e responsabilidades por ponto. Um cartão por ponto base identificado.</p>
+      <div class="pendente">📌 Anexo III — A ser elaborado e incorporado por aditamento</div>
+    </div>
+  </div>
+</div>
+
+<!-- RODAPÉ -->
+<div class="rodape">
+  <span>NP PMES-14CIA Nº 001 — Anexo I — Fluxograma BPMN em Diagrama de Raias</span>
+  <span>Elaborado em conformidade com a SCI nº 001/2017 (SECONT/ES) e Portaria nº 927-R/2021 (PMES)</span>
+  <span>Versão 1.0 — 2026</span>
+</div>
+
+</body>
+</html>
