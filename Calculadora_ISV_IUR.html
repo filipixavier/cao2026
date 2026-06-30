@@ -1,0 +1,509 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Calculadora ISV/IUR — 14ª Cia Ind PMES</title>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;600&display=swap" rel="stylesheet">
+<style>
+:root {
+  --navy:    #1A3A6B;
+  --blue:    #2E5FA3;
+  --blu-lt:  #EBF1FB;
+  --gold:    #C8A951;
+  --gld-lt:  #FDF6E3;
+  --green:   #2E7D32;
+  --grn-lt:  #E8F5E9;
+  --amber:   #C05A10;
+  --amb-lt:  #FFF3E0;
+  --red:     #B03020;
+  --red-lt:  #FDECEA;
+  --bg:      #F6F9FC;
+  --bg2:     #EEF3FA;
+  --border:  #C8D8EC;
+  --text:    #1A1A2E;
+  --text2:   #4A5568;
+  --text3:   #8A9BBC;
+  --white:   #FFFFFF;
+  --mono:    'JetBrains Mono', monospace;
+  --sans:    'Inter', sans-serif;
+  --r:       10px;
+  --sh:      0 2px 12px rgba(26,58,107,.10);
+}
+* { box-sizing: border-box; margin: 0; padding: 0; }
+html { scroll-behavior: smooth; }
+body { font-family: var(--sans); background: var(--bg); color: var(--text); font-size: 14px; line-height: 1.6; }
+
+/* ── TOPO ── */
+header {
+  background: var(--navy);
+  border-bottom: 3px solid var(--gold);
+  padding: 0;
+}
+.header-inner {
+  max-width: 980px; margin: 0 auto;
+  padding: 16px 24px;
+  display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap; gap: 12px;
+}
+.header-brand h1 { font-size: 17px; font-weight: 700; color: #fff; }
+.header-brand p  { font-size: 11px; color: rgba(255,255,255,.55); margin-top: 2px; }
+.header-badge {
+  background: rgba(200,169,81,.18); border: 1px solid rgba(200,169,81,.35);
+  color: var(--gold); border-radius: 20px; font-size: 11px;
+  padding: 4px 14px; font-weight: 600; white-space: nowrap;
+}
+
+/* ── WRAP ── */
+.wrap { max-width: 980px; margin: 0 auto; padding: 32px 24px 80px; }
+
+/* ── AVISO CONCEITUAL ── */
+.aviso {
+  background: var(--gld-lt); border: 1px solid #E8D080;
+  border-left: 4px solid var(--gold); border-radius: var(--r);
+  padding: 14px 18px; margin-bottom: 28px;
+  font-size: 13px; color: #4A3A00; line-height: 1.6;
+}
+.aviso strong { color: #7A5600; }
+
+/* ── GRADE PRINCIPAL ── */
+.grid-main {
+  display: grid;
+  grid-template-columns: 360px 1fr;
+  gap: 24px;
+  align-items: start;
+}
+@media (max-width: 800px) { .grid-main { grid-template-columns: 1fr; } }
+
+/* ── PAINEL ── */
+.painel {
+  background: var(--white); border: 1px solid var(--border);
+  border-radius: var(--r); padding: 22px 24px; box-shadow: var(--sh);
+}
+.painel-title {
+  font-size: 12px; font-weight: 700; color: var(--navy);
+  text-transform: uppercase; letter-spacing: .08em;
+  border-bottom: 2px solid var(--navy); padding-bottom: 8px; margin-bottom: 18px;
+}
+
+/* ── FORM ── */
+.campo { margin-bottom: 14px; }
+.campo label {
+  display: block; font-size: 12px; font-weight: 600;
+  color: var(--navy); margin-bottom: 5px;
+}
+.campo .hint { font-size: 11px; color: var(--text3); margin-bottom: 5px; display: block; }
+.campo input, .campo select {
+  width: 100%; padding: 9px 12px; font-size: 13px;
+  border: 1.5px solid var(--border); border-radius: 7px;
+  font-family: var(--sans); background: var(--bg);
+  color: var(--text); transition: border .15s;
+}
+.campo input:focus, .campo select:focus {
+  outline: none; border-color: var(--blue); background: var(--white);
+}
+.campo-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
+
+.ref-box {
+  background: var(--bg2); border-radius: 7px; border: 1px solid var(--border);
+  padding: 10px 14px; font-size: 12px; color: var(--text2); margin-top: 4px;
+  line-height: 1.55;
+}
+.ref-box strong { color: var(--navy); }
+
+.sep { border: none; border-top: 1px dashed var(--border); margin: 18px 0; }
+
+/* ── RESULTADO ISV ── */
+.isv-card {
+  border-radius: var(--r); padding: 22px 24px; margin-bottom: 18px;
+  border: 2px solid; transition: all .3s;
+}
+.isv-top { display: flex; align-items: center; gap: 16px; margin-bottom: 6px; }
+.isv-score { font-family: var(--mono); font-size: 52px; font-weight: 700; line-height: 1; }
+.isv-info .faixa-nome { font-size: 17px; font-weight: 700; margin-bottom: 3px; }
+.isv-info .faixa-label { font-size: 11px; font-weight: 700; letter-spacing: .08em; text-transform: uppercase; }
+.isv-formula { font-family: var(--mono); font-size: 12px; color: var(--text3); margin-top: 8px; }
+.isv-acao { font-size: 13px; margin-top: 10px; padding-top: 10px; border-top: 1px solid; line-height: 1.55; }
+
+/* ── CARDS I1 / I3 ── */
+.ind-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; margin-bottom: 18px; }
+.ind-card {
+  background: var(--bg2); border: 1px solid var(--border);
+  border-radius: var(--r); padding: 14px 16px;
+}
+.ind-card .ind-label {
+  font-size: 10px; font-weight: 700; text-transform: uppercase;
+  letter-spacing: .08em; color: var(--text3); margin-bottom: 6px;
+}
+.ind-card .ind-val {
+  font-family: var(--mono); font-size: 26px; font-weight: 700;
+  color: var(--navy); line-height: 1; margin-bottom: 6px;
+}
+.ind-card .ind-sub { font-size: 11.5px; color: var(--text2); }
+.ind-card .ind-bar-bg {
+  height: 6px; background: var(--border); border-radius: 3px;
+  overflow: hidden; margin-top: 8px;
+}
+.ind-card .ind-bar { height: 100%; border-radius: 3px; transition: width .4s; }
+.ind-card .ind-peso {
+  font-size: 10px; font-weight: 700; color: var(--text3);
+  text-align: right; margin-top: 4px;
+}
+
+/* ── SEPARADOR IUR ── */
+.iur-sep {
+  border-top: 2px dashed #E8D080; margin: 6px 0 16px;
+  display: flex; align-items: center; gap: 10px;
+}
+.iur-sep-label {
+  background: var(--gld-lt); border: 1px solid #E8D080;
+  color: #7A5600; font-size: 11px; font-weight: 700;
+  padding: 3px 12px; border-radius: 12px; white-space: nowrap;
+  text-transform: uppercase; letter-spacing: .07em;
+}
+
+/* ── IUR ── */
+.iur-card {
+  background: var(--bg2); border: 1.5px solid var(--border);
+  border-radius: var(--r); padding: 16px 18px;
+}
+.iur-top { display: flex; align-items: center; gap: 16px; }
+.iur-score {
+  font-family: var(--mono); font-size: 36px; font-weight: 700; line-height: 1;
+}
+.iur-info .iur-nome { font-size: 14px; font-weight: 700; margin-bottom: 2px; }
+.iur-info .iur-ref  { font-size: 11.5px; color: var(--text2); }
+.iur-nota {
+  margin-top: 12px; padding-top: 10px; border-top: 1px dashed var(--border);
+  font-size: 12.5px; color: var(--text2); line-height: 1.55;
+}
+
+/* ── TABELA FAIXAS ── */
+.tabela-faixas { width: 100%; border-collapse: collapse; font-size: 12.5px; margin-top: 18px; }
+.tabela-faixas thead tr { background: var(--navy); }
+.tabela-faixas th {
+  padding: 8px 10px; text-align: center; font-weight: 600;
+  color: var(--gold); font-size: 11px; letter-spacing: .05em; text-transform: uppercase;
+}
+.tabela-faixas td { padding: 8px 10px; border-bottom: 1px solid var(--border); vertical-align: middle; }
+.tabela-faixas .row-ativa td { font-weight: 700; }
+.badge-f { display: inline-block; width: 26px; height: 26px; border-radius: 5px; line-height: 26px; text-align: center; font-weight: 700; font-size: 13px; }
+
+/* ── RODAPÉ ── */
+footer {
+  background: var(--navy); color: rgba(255,255,255,.5);
+  text-align: center; padding: 18px 24px; font-size: 11.5px;
+  margin-top: 60px;
+}
+footer strong { color: rgba(255,255,255,.8); }
+
+/* ── UTILS ── */
+.mt8 { margin-top: 8px; }
+</style>
+</head>
+<body>
+
+<header>
+  <div class="header-inner">
+    <div class="header-brand">
+      <h1>Calculadora ISV / IUR</h1>
+      <p>14ª Companhia Independente de Polícia Militar — PMES &nbsp;|&nbsp; NP PMES-14CIA Nº 001 — Anexo II</p>
+    </div>
+    <span class="header-badge">CAO 2026 · Gestão da Informação e do Conhecimento</span>
+  </div>
+</header>
+
+<div class="wrap">
+
+  <div class="aviso">
+    <strong>Dois instrumentos complementares, finalidades distintas:</strong>
+    O <strong>ISV</strong> (Índice de Saúde da Viatura) mede a condição mecânica intrínseca — responde <em>"esta viatura está em boas condições?"</em>
+    O <strong>IUR</strong> (Indicador de Uso Relativo) mede a intensidade de uso relativa ao esperado — responde <em>"este serviço vai exigir muito desta viatura?"</em>
+    O km rodado <strong>não entra na fórmula do ISV</strong>; é usado apenas para calcular o IUR e o custo/km.
+  </div>
+
+  <div class="grid-main">
+
+    <!-- ── PAINEL DE ENTRADA ── -->
+    <div class="painel">
+      <div class="painel-title">Dados da Viatura</div>
+
+      <div class="campo">
+        <label>Identificação (prefixo / placa)</label>
+        <input type="text" id="prefixo" value="VTR-EXEMPLO">
+      </div>
+
+      <div class="campo">
+        <label>Modalidade de vínculo</label>
+        <span class="hint">Define o KM/mês esperado para o IUR</span>
+        <select id="modalidade">
+          <option value="60000">RO — Atendimento a Ocorrências (60.000 km/ano)</option>
+          <option value="55000" selected>ROR — Ronda Ostensiva (55.000 km/ano)</option>
+          <option value="50000">ROR-A — Grupo de Abordagem (50.000 km/ano)</option>
+          <option value="50000">Força Tática — FT (50.000 km/ano)</option>
+          <option value="35000">Rede Comunidade Segura (35.000 km/ano)</option>
+          <option value="30000">Patrulha da Comunidade — PCOM (30.000 km/ano)</option>
+          <option value="25000">Patrulha Maria da Penha (25.000 km/ano)</option>
+          <option value="15000">PROERD (15.000 km/ano)</option>
+          <option value="20000">Reserva / Operações Eventuais (20.000 km/ano)</option>
+        </select>
+      </div>
+
+      <div class="campo-grid">
+        <div class="campo">
+          <label>Ano de fabricação</label>
+          <input type="number" id="anoFab" value="2020" min="1990" max="2030">
+        </div>
+        <div class="campo">
+          <label>Ano de referência</label>
+          <input type="number" id="anoRef" value="2026" min="2000" max="2100">
+        </div>
+      </div>
+
+      <div class="campo">
+        <label>KM acumulado real (odômetro)</label>
+        <span class="hint">Usado para Custo/km (ISV) e para o IUR</span>
+        <input type="number" id="kmReal" value="270000" min="0" step="1000">
+      </div>
+
+      <div class="campo">
+        <label>Custo de manutenção acumulado (R$)</label>
+        <input type="number" id="custoManut" value="38000" min="0" step="100">
+      </div>
+
+      <div class="campo">
+        <label>KM/mês real do período de aferição</label>
+        <span class="hint">Para o IUR — usar dado do levantamento mensal</span>
+        <input type="number" id="kmMes" value="1814" min="0" step="100">
+      </div>
+
+      <hr class="sep">
+
+      <div class="campo">
+        <label>Custo/km médio da frota — c̄ (R$/km)</label>
+        <span class="hint">Calculado pela P4 semestralmente (item II.4.2)</span>
+        <input type="number" id="custoMedio" value="0.10" min="0.001" step="0.001">
+      </div>
+
+      <div class="ref-box">
+        <strong>Base contábil (I1):</strong> Conta 52 — Veículos de Tração Mecânica
+        · Vida útil: 15 anos · Residual: 10% · Taxa: 6,67%/ano
+        · Fonte: SIGA/SEGER-SUPAM (ES)
+      </div>
+    </div>
+
+    <!-- ── PAINEL DE RESULTADO ── -->
+    <div>
+
+      <!-- ISV -->
+      <div id="isv-card" class="isv-card">
+        <div class="isv-top">
+          <div id="isv-score" class="isv-score">—</div>
+          <div class="isv-info">
+            <div id="isv-viatura" style="font-size:12px;font-weight:600;margin-bottom:4px;"></div>
+            <div id="faixa-label" class="faixa-label">—</div>
+            <div id="faixa-nome" class="faixa-nome">—</div>
+          </div>
+        </div>
+        <div class="isv-formula" id="isv-formula">ISV = (0,40 × I1) + (0,60 × I3)</div>
+        <div id="isv-acao" class="isv-acao">—</div>
+      </div>
+
+      <!-- I1 e I3 -->
+      <div class="ind-grid">
+        <div class="ind-card">
+          <div class="ind-label">I1 — Idade Relativa</div>
+          <div class="ind-val" id="i1-val">—</div>
+          <div class="ind-sub" id="i1-sub">—</div>
+          <div class="ind-bar-bg"><div class="ind-bar" id="i1-bar" style="background:#2E5FA3;width:0%"></div></div>
+          <div class="ind-peso">Peso 40%</div>
+        </div>
+        <div class="ind-card">
+          <div class="ind-label">I3 — Custo / km</div>
+          <div class="ind-val" id="i3-val">—</div>
+          <div class="ind-sub" id="i3-sub">—</div>
+          <div class="ind-bar-bg"><div class="ind-bar" id="i3-bar" style="background:#C8A951;width:0%"></div></div>
+          <div class="ind-peso">Peso 60%</div>
+        </div>
+      </div>
+
+      <!-- Separador IUR -->
+      <div class="iur-sep">
+        <div class="iur-sep-label">IUR — Indicador de Uso Relativo (não entra no ISV)</div>
+      </div>
+
+      <!-- IUR -->
+      <div class="iur-card">
+        <div class="iur-top">
+          <div id="iur-score" class="iur-score" style="color:#7A5600;">—</div>
+          <div class="iur-info">
+            <div id="iur-nome" class="iur-nome" style="color:#7A5600;">—</div>
+            <div id="iur-ref" class="iur-ref">—</div>
+          </div>
+        </div>
+        <div class="iur-nota" id="iur-nota">—</div>
+      </div>
+
+      <!-- Tabela de faixas ISV -->
+      <table class="tabela-faixas mt8">
+        <thead>
+          <tr>
+            <th>Faixa</th><th>ISV</th><th>Designação</th><th>Ação P4 / P3</th>
+          </tr>
+        </thead>
+        <tbody id="tbody-faixas"></tbody>
+      </table>
+
+    </div>
+  </div>
+</div>
+
+<footer>
+  <strong>14ª Companhia Independente de Polícia Militar — PMES</strong><br>
+  NP PMES-14CIA Nº 001 · Anexo II — Metodologia ISV/IUR · CAO 2026<br>
+  Cap QOCPM Filipi Xavier de Sousa · Ferramenta de apoio — não substitui o sistema oficial de acompanhamento de frota
+</footer>
+
+<script>
+// ── CONFIGURAÇÃO DAS FAIXAS ──────────────────────────────────
+const FAIXAS = [
+  {
+    letra: 'A', min: 75, max: 100, nome: 'Excelente',
+    cor: '#2E7D32', bg: '#E8F5E9', borda: '#A5D6A7',
+    acao: 'Apta a qualquer modalidade e setor. Nenhuma restrição adicional. Monitoramento de rotina.',
+    corBadge: '#fff', bgBadge: '#2E7D32'
+  },
+  {
+    letra: 'B', min: 50, max: 74.9, nome: 'Adequado',
+    cor: '#2E5FA3', bg: '#EBF1FB', borda: '#90CAF9',
+    acao: 'Desgaste dentro do esperado. Manutenção preventiva no próximo ciclo regular. Nenhuma ação imediata.',
+    corBadge: '#fff', bgBadge: '#2E5FA3'
+  },
+  {
+    letra: 'C', min: 25, max: 49.9, nome: 'Atenção',
+    cor: '#C05A10', bg: '#FFF3E0', borda: '#FFCC80',
+    acao: 'Desgaste acima da referência da frota. P4 programa revisão preventiva no curto prazo. Alocação preferencial em serviços de baixo IUR.',
+    corBadge: '#fff', bgBadge: '#C05A10'
+  },
+  {
+    letra: 'D', min: 0, max: 24.9, nome: 'Crítico',
+    cor: '#B03020', bg: '#FDECEA', borda: '#EF9A9A',
+    acao: 'Degradação acentuada. P4 avalia manutenção vs. substituição (confrontar limiar de 60% do valor FIPE — Portaria PMDF nº 766/2012). Apenas serviços de baixíssimo IUR ou retirada de serviço.',
+    corBadge: '#fff', bgBadge: '#B03020'
+  }
+];
+
+// ── CONFIGURAÇÃO DO IUR ──────────────────────────────────────
+const IUR_FAIXAS = [
+  { max: 0.70, nome: 'Folga', cor: '#2E7D32', nota: 'Uso abaixo do esperado para a modalidade e o setor. Viatura com capacidade disponível para absorver redistribuição ou aumento de demanda. Destino indicado para viaturas em Faixas C ou D do ISV.' },
+  { max: 1.30, nome: 'Compatível', cor: '#2E5FA3', nota: 'Uso alinhado ao padrão da modalidade e do setor (variação de ±30% acomoda sazonalidade e operações especiais). Emprego padrão, sem ajuste necessário.' },
+  { max: 999,  nome: 'Sobrecarga', cor: '#B03020', nota: 'Uso acima do esperado. Considerar redistribuição com viatura de menor IUR. Viaturas nas Faixas C ou D do ISV não devem permanecer em serviços de sobrecarga.' }
+];
+
+// ── MONTAR TABELA DE FAIXAS ──────────────────────────────────
+function buildTabela() {
+  const tbody = document.getElementById('tbody-faixas');
+  const linhas = [
+    { f: FAIXAS[0], range: 'ISV ≥ 75' },
+    { f: FAIXAS[1], range: '50 ≤ ISV < 75' },
+    { f: FAIXAS[2], range: '25 ≤ ISV < 50' },
+    { f: FAIXAS[3], range: 'ISV < 25' },
+  ];
+  tbody.innerHTML = linhas.map(({ f, range }) => `
+    <tr id="row-${f.letra}">
+      <td style="text-align:center;">
+        <span class="badge-f" style="color:${f.corBadge};background:${f.bgBadge};">${f.letra}</span>
+      </td>
+      <td style="font-family:var(--mono);font-size:11.5px;color:${f.cor};">${range}</td>
+      <td style="font-weight:600;color:${f.cor};">${f.nome}</td>
+      <td style="color:#4A5568;">${f.acao}</td>
+    </tr>`).join('');
+}
+
+// ── CÁLCULO PRINCIPAL ────────────────────────────────────────
+function calcular() {
+  const prefixo = document.getElementById('prefixo').value || 'VTR';
+  const kmAno   = parseFloat(document.getElementById('modalidade').value);
+  const anoFab  = parseInt(document.getElementById('anoFab').value);
+  const anoRef  = parseInt(document.getElementById('anoRef').value);
+  const kmReal  = parseFloat(document.getElementById('kmReal').value) || 0;
+  const custo   = parseFloat(document.getElementById('custoManut').value) || 0;
+  const kmMes   = parseFloat(document.getElementById('kmMes').value) || 0;
+  const cMedio  = parseFloat(document.getElementById('custoMedio').value) || 0.001;
+
+  const idade = Math.max(0, anoRef - anoFab);
+
+  // I1 — Idade Relativa
+  const i1 = Math.min(100, Math.max(0, 100 * (1 - idade / 15)));
+
+  // I3 — Custo/km
+  const cKm = kmReal > 0 ? custo / kmReal : 0;
+  const i3  = Math.min(100, Math.max(0, 100 * (1 - cKm / (2 * cMedio))));
+
+  // ISV
+  const isv = 0.40 * i1 + 0.60 * i3;
+
+  // IUR
+  const kmEsp = kmAno / 12;
+  const iur   = kmEsp > 0 ? kmMes / kmEsp : 0;
+
+  // Faixa ISV
+  const faixa = FAIXAS.find(f => isv >= f.min) || FAIXAS[3];
+
+  // Faixa IUR
+  const fIUR = IUR_FAIXAS.find(f => iur <= f.max) || IUR_FAIXAS[2];
+
+  // ── Atualizar ISV card ──
+  const card = document.getElementById('isv-card');
+  card.style.borderColor = faixa.borda;
+  card.style.background  = faixa.bg;
+
+  document.getElementById('isv-score').textContent = isv.toFixed(1);
+  document.getElementById('isv-score').style.color = faixa.cor;
+  document.getElementById('isv-viatura').textContent = prefixo;
+  document.getElementById('faixa-label').textContent = `Faixa ${faixa.letra}`;
+  document.getElementById('faixa-label').style.color = faixa.cor;
+  document.getElementById('faixa-nome').textContent = faixa.nome;
+  document.getElementById('faixa-nome').style.color = faixa.cor;
+  document.getElementById('isv-formula').textContent =
+    `ISV = (0,40 × ${i1.toFixed(1)}) + (0,60 × ${i3.toFixed(1)}) = ${isv.toFixed(1)}`;
+  document.getElementById('isv-acao').textContent = faixa.acao;
+  document.getElementById('isv-acao').style.borderColor = faixa.borda;
+  document.getElementById('isv-acao').style.color = faixa.cor;
+
+  // ── I1 ──
+  document.getElementById('i1-val').textContent = i1.toFixed(1);
+  document.getElementById('i1-sub').textContent = `${idade} anos de uso`;
+  document.getElementById('i1-bar').style.width = i1 + '%';
+  document.getElementById('i1-bar').style.background = faixa.cor;
+
+  // ── I3 ──
+  document.getElementById('i3-val').textContent = i3.toFixed(1);
+  document.getElementById('i3-sub').textContent = `R$/km: ${cKm.toFixed(3)} · c̄: ${cMedio.toFixed(3)}`;
+  document.getElementById('i3-bar').style.width = i3 + '%';
+  document.getElementById('i3-bar').style.background = faixa.cor;
+
+  // ── IUR ──
+  document.getElementById('iur-score').textContent = iur.toFixed(2);
+  document.getElementById('iur-score').style.color = fIUR.cor;
+  document.getElementById('iur-nome').textContent = fIUR.nome;
+  document.getElementById('iur-nome').style.color = fIUR.cor;
+  document.getElementById('iur-ref').textContent =
+    `${kmMes.toLocaleString('pt-BR')} km/mês real · ${Math.round(kmEsp).toLocaleString('pt-BR')} km/mês esperado`;
+  document.getElementById('iur-nota').textContent = fIUR.nota;
+
+  // ── Destacar faixa ativa ──
+  FAIXAS.forEach(f => {
+    const row = document.getElementById('row-' + f.letra);
+    if (row) row.style.background = f.letra === faixa.letra ? faixa.bg : '';
+  });
+}
+
+// ── INIT ────────────────────────────────────────────────────
+buildTabela();
+document.querySelectorAll('input, select').forEach(el =>
+  el.addEventListener('input', calcular)
+);
+calcular();
+</script>
+</body>
+</html>
